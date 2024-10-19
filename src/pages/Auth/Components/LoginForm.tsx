@@ -4,26 +4,22 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
-
-const schema = z.object({
-  email: z
-    .string()
-    .email({ message: "Invalid email address.Please try again." }),
-  password: z.string(),
-  // .min(6, { message: "Password must be at least 6 characters" })
-  // .regex(/[0-9]/, { message: "Password must contain at least one number" })
-  // .regex(/[!@#$%^&*(),.?":{}|<>]/, {
-  //   message: "Password must contain at least one special character",
-  // }),
-});
+import { Eye, EyeOff, Link } from "lucide-react";
+import { ForgetPassword } from "./ForgetPassword";
+import { ModeToggle } from "@/components/Global/ModeToggle";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const LoginForm = ({
   onToggle,
   setLoadingState,
+  setIsDark,
+  isDark,
 }: {
   onToggle: () => void;
   setLoadingState: (state: boolean) => void;
+  setIsDark: (state: boolean) => void;
+  isDark: boolean;
 }) => {
   // State to store form data and errors
   const [data, setData] = useState({ email: "", password: "" });
@@ -36,6 +32,11 @@ const LoginForm = ({
       [e.target.name]: e.target.value,
     });
   };
+
+  const schema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z.string().min(1, { message: "Password is mandatory" }),
+  });
 
   // Form submission handler
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,57 +65,68 @@ const LoginForm = ({
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -50 }}
         transition={{ duration: 0.5 }}
-        className="space-y-4"
+        className="space-y-4 w-full"
       >
         <AnimatedText>
           <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
-          <p className="text-gray-600 mb-6">Log in to access your portfolio</p>
+          <p className="mb-6">Log in to access your portfolio</p>
         </AnimatedText>
         <form onSubmit={handleSubmit} className="space-y-4">
           <AnimatedText delay={0.1}>
-            <input
+            <Input
               type="text"
               name="email"
               placeholder="Email"
               value={data.email}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-12"
             />
           </AnimatedText>
 
           <AnimatedText delay={0.2}>
             <div className="relative">
-              <input
+              <Input
                 type={passwordType}
                 name="password"
                 placeholder="Password"
                 value={data.password}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="h-12"
               />
               {passwordType === "password" ? (
-                <EyeOff
+                <Button
+                  variant="ghost"
+                  type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                   onClick={() => setPasswordType("text")}
-                />
+                >
+                  <EyeOff />
+                </Button>
               ) : (
-                <Eye
+                <Button
+                  variant="ghost"
+                  type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                   onClick={() => setPasswordType("password")}
-                />
+                >
+                  <Eye />
+                </Button>
               )}
             </div>
           </AnimatedText>
 
           <AnimatedText delay={0.3}>
-            <button
+            <Button
               type="submit"
-              className="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition-colors duration-300 transform hover:scale-[1.01]"
+              className="h-12 text-xl w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition-colors duration-300 transform hover:scale-[1.01]"
+              disabled={isPending}
             >
               Log in
-            </button>
+            </Button>
           </AnimatedText>
         </form>
+        <ForgetPassword />
+
         <AnimatedText delay={0.4}>
           <p className="text-center text-sm">
             Don't have an account?{" "}
@@ -127,6 +139,9 @@ const LoginForm = ({
           </p>
         </AnimatedText>
       </motion.div>
+      <div className="absolute bottom-1 left-1">
+        <ModeToggle />
+      </div>
     </>
   );
 };

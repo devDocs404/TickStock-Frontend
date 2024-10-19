@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { createRoutes } from "./Routes/Routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { ThemeProvider } from "./components/theme-provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,10 +21,12 @@ const App = () => {
   const routes = createRoutes(isDark, setIsDark);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={routes} />
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={routes} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

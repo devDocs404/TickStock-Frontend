@@ -44,8 +44,8 @@ export function useLoginPost() {
       const uploadPayload = {
         data: payload,
       };
-      return handleResponse({
-        url: "auth/login",
+      return await handleResponse({
+        url: "login",
         type: "post",
         payload: {
           ...uploadPayload,
@@ -56,8 +56,8 @@ export function useLoginPost() {
     onSuccess: (response) => {
       toast.success(`Login successful.`);
       setField("user", response?.data?.user);
-      setField("refreshToken", response?.auth?.refreshToken);
-      setField("accessToken", response?.auth?.accessToken);
+      setField("refreshToken", response?.authorization?.refreshToken);
+      setField("accessToken", response?.authorization?.accessToken);
       navigate("/");
     },
     onError: (error: {
@@ -79,6 +79,40 @@ export function useLoginPost() {
     //     });
     //   }
     // },
+  });
+}
+
+interface SignupPayload {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+}
+export function useSignupPost() {
+  const { handleResponse } = useResponseHandler();
+
+  return useMutation({
+    mutationFn: async (payload: SignupPayload) => {
+      return await handleResponse({
+        url: "signup",
+        type: "post",
+        payload: { data: { ...payload } },
+      });
+    },
+    onSuccess: () => {
+      toast.success(`Signup successful.`);
+    },
+    onError: (error: {
+      status?: number;
+      response?: { data?: { errors?: string[] } };
+    }) => {
+      if (error?.status === 409) {
+        toast.error(error.response?.data?.errors?.[0]);
+      } else {
+        toast.error("Error occurred with signup.");
+      }
+    },
   });
 }
 

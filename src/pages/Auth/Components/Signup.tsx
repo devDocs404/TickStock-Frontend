@@ -1,13 +1,18 @@
+import { Input } from "@/components/ui/input";
 import { AnimatedText } from "./AnimatedText";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { EyeOff } from "lucide-react";
+import { useSignupPost } from "@/Queries/AuthQueries";
 
 const schema2 = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   firstName: z.string().min(1, { message: "Enter correct First Name." }),
   lastName: z.string().min(1, { message: "Enter correct Last Name." }),
-  phoneNumber: z
+  mobileNumber: z
     .string()
     .min(10, { message: "Enter correct Phone Number." })
     .max(10, { message: "Enter correct Phone Number." }),
@@ -28,15 +33,28 @@ type PasswordRule = {
   label: string;
 };
 
-const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
+const SignupForm = ({
+  onToggle,
+  setLoadingState,
+}: {
+  onToggle: () => void;
+  setIsDark: (state: boolean) => void;
+  isDark: boolean;
+  setLoadingState: (state: boolean) => void;
+}) => {
   const [data, setData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
     firstName: "",
     lastName: "",
-    phoneNumber: "",
+    mobileNumber: "",
   });
+  const [passwordType, setPasswordType] = useState({
+    password: "password",
+    confirmPassword: "password",
+  });
+  const { mutate, isPending } = useSignupPost();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordValidations, setPasswordValidations] = useState<
     PasswordRule[]
@@ -83,7 +101,7 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
       schema2.parse(data);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...finalPayload } = data;
-      console.log(finalPayload, "kjalsfkjasljdlf");
+      mutate({ ...finalPayload });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.errors.reduce(
@@ -102,6 +120,10 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
   useEffect(() => {
     validateForm(data.password, data.confirmPassword);
   }, [data.password, data.confirmPassword, validateForm]);
+
+  useEffect(() => {
+    setLoadingState(isPending);
+  }, [isPending, setLoadingState]);
 
   return (
     <motion.div
@@ -122,11 +144,10 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
         <AnimatedText delay={0.1}>
           <div className="flex space-x-4">
             <div className="w-full">
-              <input
+              <Input
                 type="text"
                 name="firstName"
                 placeholder="First Name"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}
               />
               {errors.firstName && (
@@ -134,11 +155,10 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
               )}
             </div>
             <div className="w-full">
-              <input
+              <Input
                 type="text"
                 name="lastName"
                 placeholder="Last Name"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}
               />
               {errors.lastName && (
@@ -148,27 +168,27 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
           </div>
         </AnimatedText>
         <AnimatedText delay={0.2}>
-          <input
+          <Input
             type="number"
-            name="phoneNumber"
-            value={data.phoneNumber}
+            name="mobileNumber"
+            value={data.mobileNumber}
             onChange={handleChange}
             placeholder="Phone Number"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            autoComplete="off"
           />
-          {errors.phoneNumber && (
-            <p className="text-red-500 text-sm pt-1">{errors.phoneNumber}</p>
+          {errors.mobileNumber && (
+            <p className="text-red-500 text-sm pt-1">{errors.mobileNumber}</p>
           )}
         </AnimatedText>
 
         <AnimatedText delay={0.2}>
-          <input
+          <Input
             type="email"
             name="email"
             value={data.email}
             onChange={handleChange}
             placeholder="Email"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            autoComplete="off"
           />
           {errors.email && (
             <p className="text-red-500 text-sm pt-1">{errors.email}</p>
@@ -176,28 +196,65 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
         </AnimatedText>
 
         <AnimatedText delay={0.3}>
-          <input
-            type="password"
-            name="password"
-            value={data.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="relative">
+            <Input
+              type={passwordType.password}
+              name="password"
+              placeholder="Password"
+              value={data.password}
+              onChange={handleChange}
+              autoComplete="off"
+            />
+            {passwordType.password === "password" ? (
+              <EyeOff
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                onClick={() =>
+                  setPasswordType({ ...passwordType, password: "text" })
+                }
+              />
+            ) : (
+              <Eye
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                onClick={() =>
+                  setPasswordType({ ...passwordType, password: "password" })
+                }
+              />
+            )}
+          </div>
         </AnimatedText>
 
         <AnimatedText delay={0.4}>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={data.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm Password"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="relative">
+            <Input
+              type={passwordType.confirmPassword}
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={data.confirmPassword}
+              onChange={handleChange}
+              className="mb-6"
+            />
+            {passwordType.confirmPassword === "password" ? (
+              <EyeOff
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                onClick={() =>
+                  setPasswordType({ ...passwordType, confirmPassword: "text" })
+                }
+              />
+            ) : (
+              <Eye
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                onClick={() =>
+                  setPasswordType({
+                    ...passwordType,
+                    confirmPassword: "password",
+                  })
+                }
+              />
+            )}
+          </div>
 
           {/* Password rules display */}
-          <div className="mt-2 space-y-1">
+          <div className="mt-2 space-y-3 ml-4">
             {passwordValidations.map((rule, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <span
@@ -236,17 +293,13 @@ const SignupForm = ({ onToggle }: { onToggle: () => void }) => {
         </AnimatedText>
 
         <AnimatedText delay={0.5}>
-          <button
+          <Button
             type="submit"
             disabled={!isFormValid}
-            className={`w-full p-3 rounded-md transition-colors duration-300 transform ${
-              isFormValid
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-400 text-gray-700 cursor-not-allowed"
-            }`}
+            className={`w-full p-3 rounded-md transition-colors duration-300 transform `}
           >
             Sign up
-          </button>
+          </Button>
         </AnimatedText>
       </form>
 

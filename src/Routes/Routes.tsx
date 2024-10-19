@@ -79,7 +79,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
     },
     {
       path: "/login",
-      element: <AuthenticationPage />,
+      element: <AuthenticationPage setIsDark={setIsDark} isDark={isDark}/>,
     },
   ]);
 };

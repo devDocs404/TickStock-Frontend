@@ -107,9 +107,8 @@ const Template = ({
   }, []);
   return (
     <div
-      // className="flex "
       className={`flex h-[100vh] m-w-[100vw] overflow-y-auto ${
-        isDark ? "bg-gray-800" : "bg-[#FBFBFB]"
+        isDark ? "bg-gray-800" : "bg-[#FBFBFB] "
       }`}
     >
       <Sidebar

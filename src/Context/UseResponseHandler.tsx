@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { useAuthStore } from "../Store/AuthStore";
 
 interface Payload {
-  params?: Record<string, unknown>;
-  data?: Record<string, unknown>;
+  params?: { [key: string]: string };
+  data?: { [key: string]: string };
 }
 
 interface HeaderStructure {
@@ -18,7 +18,9 @@ interface HeaderStructure {
 const useResponseHandler = () => {
   const { setField, refreshToken, accessToken } = useAuthStore(); // You can still use the store to update user info if needed
   const navigate = useNavigate();
-  const baseURL = "http://127.0.0.1:2021/api/";
+  // const baseURL = "http://127.0.0.1:2021/api/";
+  const baseURL = "https://www.api.tickstock.muzakkir.dev/";
+  // const baseURL = " http://127.0.0.1:8787";
 
   // Create an axios instance with withCredentials set to true
   const axiosInstance = axios.create({
