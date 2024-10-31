@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "lint:fix": "bun run lint --fix",
     "preview": "vite preview",
-    "svgr": "bun svgrScript.js"
+    "svgr": "bun svgrScript.js",
+    "prettier": "bun prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
