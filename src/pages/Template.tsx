@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Outlet, useLocation } from "react-router-dom";
 import { BarChart2, Wallet, User, LayoutDashboard } from "lucide-react";
 import { Sidebar } from "../components/SideBar";
+import { useGlobalStore } from "@/Store/GlobalSore";
+import { Toaster } from "sonner";
 
 const Template = ({
   setIsDark,
@@ -17,34 +19,35 @@ const Template = ({
   const [activeChildItem, setActiveChildItem] = useState<number | null>(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const { toggleTheme } = useGlobalStore();
 
-  useEffect(() => {
-    const refreshApi = async () => {
-      try {
-        const response = await fetch("/api/refresh", { method: "POST" });
-        if (response.ok) {
-          const { token } = await response.json();
-          document.cookie = `refreshToken=${token}; path=/`; // Set cookie
-          // Call another API with the new token
-          const apiResponse = await fetch("/api/your-api-endpoint", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          // Handle the response from the second API
-          if (!apiResponse.ok) {
-            throw new Error("Failed to fetch data from the API");
-          }
-          // Process the data as needed
-        }
-      } catch (err) {
-        console.error("Error refreshing token or calling API:", err);
-      }
-    };
+  // useEffect(() => {
+  //   const refreshApi = async () => {
+  //     try {
+  //       const response = await fetch("/api/refresh", { method: "POST" });
+  //       if (response.ok) {
+  //         const { token } = await response.json();
+  //         document.cookie = `refreshToken=${token}; path=/`; // Set cookie
+  //         // Call another API with the new token
+  //         const apiResponse = await fetch("/api/your-api-endpoint", {
+  //           method: "GET",
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         });
+  //         // Handle the response from the second API
+  //         if (!apiResponse.ok) {
+  //           throw new Error("Failed to fetch data from the API");
+  //         }
+  //         // Process the data as needed
+  //       }
+  //     } catch (err) {
+  //       console.error("Error refreshing token or calling API:", err);
+  //     }
+  //   };
 
-    refreshApi();
-  }, []);
+  //   refreshApi();
+  // }, []);
 
   const menuItems = useMemo(
     () => [
@@ -72,7 +75,7 @@ const Template = ({
     );
     const selectedIndex = foundItem ? menuItems.indexOf(foundItem) : null;
     setActiveItem(selectedIndex);
-    const checkChildUrlPath = (item) => {
+    const checkChildUrlPath = (item: { children: { url: string }[] }) => {
       if (item.children && item.children.length > 0) {
         const childPath = item.children.find(
           (child) => child.url === location.pathname
@@ -83,7 +86,11 @@ const Template = ({
       }
     };
 
-    menuItems.forEach(checkChildUrlPath);
+    menuItems.forEach((item) => {
+      if (item.children) {
+        checkChildUrlPath(item);
+      }
+    });
   }, [location, menuItems]);
 
   useEffect(() => {
@@ -106,63 +113,61 @@ const Template = ({
     };
   }, []);
   return (
-    <div
-      className={`flex h-[100vh] m-w-[100vw] overflow-y-auto ${
-        isDark ? "bg-gray-800" : "bg-[#FBFBFB] "
-      }`}
-    >
-      <Sidebar
-        activeItem={activeItem}
-        setActiveItem={setActiveItem}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        isDark={isDark}
-        toggleTheme={() => setIsDark(!isDark)}
-        menuItems={menuItems}
-        activeChildItem={activeChildItem}
-        setActiveChildItem={setActiveChildItem}
-      />
+    <>
+      <Toaster richColors />
+      <div className={`flex h-[100vh] m-w-[100vw] overflow-y-auto `}>
+        <Sidebar
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          isDark={isDark}
+          toggleTheme={() => setIsDark(!isDark)}
+          menuItems={menuItems}
+          activeChildItem={activeChildItem}
+          setActiveChildItem={setActiveChildItem}
+        />
 
-      <div
-        className={`m-h-[100vh] w-[100%] overflow-hidden
-          ${isDark ? "bg-[#140c15]" : "bg-[#ede8fc]"}`}
-      >
         <div
-          className={`flex w-full flex-col  overflow-hidden
+          className={`m-h-[100vh] w-[100%] overflow-hidden
+         `}
+        >
+          <div
+            className={`flex w-full flex-col  overflow-hidden
              ${isOpen ? "w-[calc(100vw-278px)]" : "w-full "}
-          ${isDark ? "bg-[#140c15]" : "bg-[#ede8fc]"}`}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className={` flex ${
-              isOpen ? "justify-between" : "justify-end"
-            } w-full p-[20px] ${isDark ? " bg-[#140c15]" : "bg-[#ede8fc]"}`}
+          `}
           >
-            <div className=" w-full ">
-              <h1
-                className={`text-3xl font-bold h-[100%] flex items-center ${
-                  isDark ? "text-white " : "text-[#27293B]"
-                }`}
-              >
-                My Portfolio
-              </h1>
-            </div>
-            <div className=" w-full">
-              <SearchBar isDark={isDark} inputRef={searchInputRef} />
-            </div>
-          </motion.div>
-        </div>
-        <div
-          className={`w-[98%] h-[90%] m-auto shadow-2xl rounded-lg ${
-            isDark ? "bg-gray-800" : "bg-[#F9F9F9]"
-          }`}
-        >
-          <Outlet />
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className={` flex ${
+                isOpen ? "justify-between" : "justify-end"
+              } w-full p-[20px] `}
+            >
+              <div className=" w-full ">
+                <h1 className={`text-3xl font-bold h-[100%] flex items-center`}>
+                  My Portfolio
+                </h1>
+              </div>
+              <div className=" w-full">
+                <SearchBar
+                  toggleTheme={toggleTheme}
+                  inputRef={searchInputRef}
+                />
+              </div>
+            </motion.div>
+          </div>
+          <div
+            className={`w-[98%] h-[90%] m-auto shadow-2xl rounded-lg ${
+              toggleTheme === "dark" ? "bg-[#0F0F0F]" : "bg-white"
+            }`}
+          >
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

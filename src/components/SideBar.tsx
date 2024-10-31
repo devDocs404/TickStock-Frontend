@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useNavigate } from "react-router-dom";
+import { useGlobalStore } from "@/Store/GlobalSore";
 
 interface MenuItem {
   icon: React.ElementType;
@@ -38,13 +39,12 @@ const Sidebar = ({
   setActiveItem = () => {},
   isOpen,
   setIsOpen,
-  isDark,
-  toggleTheme,
   menuItems,
   activeChildItem,
   setActiveChildItem,
 }: SidebarProps) => {
   const navigate = useNavigate();
+  const { toggleTheme } = useGlobalStore();
 
   return (
     <motion.aside
@@ -52,8 +52,8 @@ const Sidebar = ({
       animate={{ width: isOpen ? 256 : 64 }}
       transition={{ duration: 0.3 }}
       className={`${
-        isDark
-          ? "bg-gray-800"
+        toggleTheme === "dark"
+          ? "bg-black-900"
           : // : "bg-[linear-gradient(to_top,_#EDE8FC_0%,_white_100%)]"
             "bg-[#F5F5F5]"
       }  flex flex-col h-full`}
@@ -71,33 +71,29 @@ const Sidebar = ({
         >
           <div
             className={`w-10 h-10 ${
-              isDark ? "bg-blue-400" : "bg-blue-600"
+              toggleTheme === "dark" ? "bg-blue-400" : "bg-blue-600"
             } rounded-full mr-3 flex-shrink-0`}
           ></div>
-          <h1
-            className={`text-2xl font-bold ${
-              isDark ? "text-white" : "text-gray-800"
-            } whitespace-nowrap`}
-          >
+          <h1 className={`text-2xl font-bold whitespace-nowrap`}>
             My Portfolio
           </h1>
         </motion.div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`p-2 rounded-full ${
-            isDark ? "hover:bg-gray-700" : "hover:bg-gray-200"
+            toggleTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-200"
           } transition-colors duration-200`}
           aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
         >
           {isOpen ? (
             <ChevronLeft
               size={24}
-              className={isDark ? "text-white" : "text-gray-800"}
+              // className={isDark ? "text-white" : "text-gray-800"}
             />
           ) : (
             <ChevronRight
               size={24}
-              className={isDark ? "text-white" : "text-gray-800"}
+              // className={isDark ? "text-white" : "text-gray-800"}
             />
           )}
         </button>
@@ -114,10 +110,10 @@ const Sidebar = ({
                   isOpen ? "py-2 px-4 my-3" : "py-2 my-3"
                 } rounded-lg transition-colors duration-200 ${
                   activeItem === index
-                    ? isDark
+                    ? toggleTheme === "dark"
                       ? "bg-gray-700 text-blue-400"
                       : "bg-[#7091E6] font-medium text-[#030303]"
-                    : isDark
+                    : toggleTheme === "dark"
                     ? "text-gray-300 hover:bg-gray-700"
                     : "text-gray-700 hover:bg-blue-50"
                 } ${isOpen ? "" : "justify-center"}`}
@@ -175,10 +171,10 @@ const Sidebar = ({
                         key={child.label}
                         className={`ml-6 mt-2 p-2 rounded-lg transition-colors duration-200 cursor-pointer  ${
                           activeChildItem === childIndex
-                            ? isDark
+                            ? toggleTheme === "dark"
                               ? "bg-gray-400 text-blue-200"
                               : "text-[#030303] font-semibold bg-blue-100"
-                            : isDark
+                            : toggleTheme === "dark"
                             ? "text-gray-300 hover:bg-grey-700"
                             : "text-[#212121] weight-bold  hover:bg-blue-50"
                         } ${isOpen ? "" : "justify-center"}`}
@@ -203,10 +199,10 @@ const Sidebar = ({
             : "flex flex-col items-center space-y-4"
         }`}
       >
-        <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
+        <ThemeToggle />
         <motion.button
           className={`flex items-center p-2 rounded-lg ${
-            isDark
+            toggleTheme === "dark"
               ? "text-red-400 hover:bg-gray-700"
               : "text-red-600 hover:bg-red-50"
           } transition-colors duration-200 ${isOpen ? "" : "justify-center"}`}

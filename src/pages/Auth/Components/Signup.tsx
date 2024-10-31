@@ -36,11 +36,13 @@ type PasswordRule = {
 const SignupForm = ({
   onToggle,
   setLoadingState,
+  setIsLogin,
 }: {
   onToggle: () => void;
   setIsDark: (state: boolean) => void;
   isDark: boolean;
   setLoadingState: (state: boolean) => void;
+  setIsLogin: (state: boolean) => void;
 }) => {
   const [data, setData] = useState({
     email: "",
@@ -49,12 +51,14 @@ const SignupForm = ({
     firstName: "",
     lastName: "",
     mobileNumber: "",
+    isVerified: false,
+    isForgetPassword: false,
   });
   const [passwordType, setPasswordType] = useState({
     password: "password",
     confirmPassword: "password",
   });
-  const { mutate, isPending } = useSignupPost();
+  const { mutate, isPending } = useSignupPost({ setIsLogin });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordValidations, setPasswordValidations] = useState<
     PasswordRule[]

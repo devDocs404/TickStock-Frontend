@@ -8,21 +8,13 @@ import {
 import { MetricCard } from "./Components/MetricCard";
 import { PortfolioGraph } from "./Components/PortfolioGraph";
 import { OverviewSection } from "./Components/OverviewCard";
-import { useFetchPropertyTransactions } from "../../Queries/TestHook";
-import { useEffect } from "react";
 
 const Dashboard = ({ isDark }: { isDark: boolean }) => {
-  const { data, error, isLoading } = useFetchPropertyTransactions({
-    endpoint: "auth/users",
-    type: "get",
-    queryKey: "loginTest",
-  });
-
-  useEffect(() => {
-    console.log(data, "dataljalfdlasj");
-    console.log(error, "error");
-    console.log(isLoading, "isLoading");
-  }, [data, error, isLoading]);
+  // useEffect(() => {
+  //   console.log(data, "dataljalfdlasj");
+  //   console.log(error, "error");
+  //   console.log(isLoading, "isLoading");
+  // }, [data, error, isLoading]);
 
   return (
     <>

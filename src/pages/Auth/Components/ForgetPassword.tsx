@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import { useForgetPasswordPost } from "@/Queries/AuthQueries";
 const schema = z.object({
   email: z
     .string()
@@ -21,6 +21,7 @@ const schema = z.object({
 });
 
 export function ForgetPassword() {
+  const { mutate } = useForgetPasswordPost();
   const [data, setData] = useState({
     email: "",
   });
@@ -28,6 +29,11 @@ export function ForgetPassword() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
+  };
+
+  const successTrigger = () => {
+    setData({ email: "" });
+    setIsDialogOpen(false);
   };
 
   const handleSubmitForgetPassword = (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,9 +45,7 @@ export function ForgetPassword() {
     if (!result.success) {
       toast.error(result.error.errors.map((error) => error.message).join(", "));
     } else {
-      toast.success("Email sent successfully");
-      setData({ email: "" });
-      setIsDialogOpen(false);
+      mutate({ data: { email: data.email }, successTrigger });
     }
   };
 

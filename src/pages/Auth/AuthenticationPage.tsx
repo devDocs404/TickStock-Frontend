@@ -9,7 +9,6 @@ import FeatureCard from "./Components/FeatureCard";
 import StockTicker from "./Components/StockTicker";
 import { Toaster } from "sonner";
 import Loading from "@/components/Global/Loading";
-import { React, RupeeSignSvgrepoCom } from "@/components/svg/index";
 
 const Logo = () => (
   <motion.div
@@ -92,6 +91,7 @@ export default function AuthenticationPage({
                   setLoadingState={setLoadingState}
                   setIsDark={setIsDark}
                   isDark={isDark}
+                  setIsLogin={setIsLogin}
                 />
               )}
             </AnimatePresence>
@@ -118,7 +118,7 @@ export default function AuthenticationPage({
         </div>
         <div className="hidden w-1/2 md:flex flex-col justify-center items-center p-12 relative overflow-hidden">
           <div className="absolute inset-0 z-0 bg-black-900">
-            <Background isDark={isDark} />
+            <Background />
           </div>
           <div className="relative z-10 w-full max-w-lg">
             <AnimatedText>

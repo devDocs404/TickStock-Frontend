@@ -1,31 +1,32 @@
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { toast } from "sonner";
-// import Cookies from "js-cookie"; // Import js-cookie for handling cookies
 import { useAuthStore } from "../Store/AuthStore";
 
 interface Payload {
-  params?: { [key: string]: string };
-  data?: { [key: string]: string };
+  params?: object;
+  data?: object;
 }
 
 interface HeaderStructure {
   url: string;
-  payload: Payload;
-  type: "get" | "post" | "put" | "delete"; // Specify valid HTTP methods
+  payload?: Payload;
+  type: "get" | "post" | "put" | "delete" | "patch";
+}
+interface ResponseWithStatus<T> {
+  data: T;
+  status: number;
 }
 
 const useResponseHandler = () => {
-  const { setField, refreshToken, accessToken } = useAuthStore(); // You can still use the store to update user info if needed
+  const { refreshToken, accessToken } = useAuthStore();
   const navigate = useNavigate();
-  // const baseURL = "http://127.0.0.1:2021/api/";
   const baseURL = "https://www.api.tickstock.muzakkir.dev/";
   // const baseURL = " http://127.0.0.1:8787";
 
-  // Create an axios instance with withCredentials set to true
-  const axiosInstance = axios.create({
+  const axiosInstance: AxiosInstance = axios.create({
     baseURL,
-    withCredentials: true, // Ensure credentials are included in requests
+    withCredentials: true,
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -33,166 +34,92 @@ const useResponseHandler = () => {
     },
   });
 
-  // Add a response interceptor
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
+      console.log(error, "originalRequest");
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.status === 401 &&
+        !originalRequest._retry
+      ) {
+        originalRequest._retry = true;
         if (refreshToken) {
           try {
-            // Attempt to refresh the token
             const refreshResponse = await axios.post(
               `${baseURL}auth/refresh-token`,
               { refreshToken }
             );
             const newAccessToken = refreshResponse.data.accessToken;
-
-            // Store the new access token in cookies
-            // Cookies.set("accessToken", newAccessToken, {
-            //   secure: true,
-            //   sameSite: "strict",
-            // });
-
-            // Update original request's Authorization header with the new access token
+            // setField("accessToken", newAccessToken);
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-            // Retry the original request with the new token
             return axiosInstance(originalRequest);
           } catch (refreshError) {
             console.error("Token refresh failed:", refreshError);
-            setField("user", []); // Clear user data in store
-            // Cookies.remove("accessToken"); // Clear cookies on error
-            // Cookies.remove("refreshToken");
-            // navigate("/login"); // Redirect to login page
-            toast.warning("Session expired.");
-            return Promise.reject(refreshError);
+            handleAuthError();
+            throw refreshError;
           }
         } else {
-          navigate("/login");
-          toast.warning("Session expired.");
+          handleAuthError();
+          throw error;
         }
       }
-      return Promise.reject(error);
+
+      throw error;
     }
   );
 
+  const handleAuthError = () => {
+    navigate("/login");
+    toast.warning("Session expired. Please log in again.");
+  };
+
   const handleLayer = async (
     url: string,
-    payload: Payload,
-    type: "get" | "post" | "put" | "delete"
+    payload: Payload = {},
+    type: HeaderStructure["type"]
   ): Promise<AxiosResponse> => {
-    // Get accessToken from cookies
-
     const requestOptions: AxiosRequestConfig = {
-      method: type.toUpperCase(),
+      method: type,
       url,
       params: payload.params,
       data: payload.data,
-      headers: { Authorization: `Bearer ${accessToken}` }, // Set token dynamically here
+      headers: { Authorization: `Bearer ${accessToken}` },
     };
 
-    const response = await axiosInstance(requestOptions);
-    return response;
+    return axiosInstance(requestOptions);
   };
 
-  const handleResponse = async ({ url, type, payload }: HeaderStructure) => {
-    const response = await handleLayer(url, payload, type);
-    return response.data;
+  const handleResponse = async <T,>({
+    url,
+    type,
+    payload = {},
+  }: HeaderStructure): Promise<ResponseWithStatus<T>> => {
+    try {
+      const response = await handleLayer(url, payload, type);
+      return {
+        data: response.data,
+        status: response.status,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "An error occurred");
+        throw {
+          message: error.response?.data?.message || "An error occurred",
+          status: error.response?.status,
+        };
+      } else {
+        toast.error("An unexpected error occurred");
+        throw {
+          message: "An unexpected error occurred",
+          status: 500,
+        };
+      }
+    }
   };
 
   return { handleResponse };
 };
 
 export { useResponseHandler };
-
-// import { useNavigate } from "react-router-dom";
-// import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-// import { toast } from "sonner";
-// import { useAuthStore } from "../Store/AuthStore";
-
-// interface Payload {
-//   params?: Record<string, unknown>;
-//   data?: Record<string, unknown>;
-// }
-
-// interface HeaderStructure {
-//   url: string;
-//   payload: Payload;
-//   type: "get" | "post" | "put" | "delete"; // Specify valid HTTP methods
-// }
-
-// const useResponseHandler = () => {
-//   const { refreshToken, accessToken, setField } = useAuthStore();
-//   const navigate = useNavigate();
-//   const baseURL = "http://127.0.0.1:2021/api/";
-//   // Create an axios instance with withCredentials set to true
-//   const axiosInstance = axios.create({
-//     baseURL,
-//     withCredentials: true, // Added to include credentials in requests
-//     headers: {
-//       "Content-Type": "application/json",
-//       // Authorization will be set dynamically in requests
-//     },
-//   });
-
-//   // Add a response interceptor
-//   axiosInstance.interceptors.response.use(
-//     (response) => response,
-//     async (error) => {
-//       const originalRequest = error.config;
-//       if (axios.isAxiosError(error) && error.response?.status === 401) {
-//         if (refreshToken.length > 0) {
-//           try {
-//             // Attempt to refresh the token
-//             const refreshResponse = await axios.post(
-//               `${baseURL}auth//refresh-token`,
-//               {
-//                 refreshToken: refreshToken,
-//               }
-//             );
-//             const newToken = refreshResponse.data.token;
-//             setField("accessToken", newToken); // Store token in memory
-//             originalRequest.headers.Authorization = `Bearer ${newToken}`; // Set new token here
-//             return axiosInstance(originalRequest); // Retry the original request
-//           } catch (refreshError) {
-//             console.error("Token refresh failed:", refreshError);
-//             setField("user", []);
-//             setField("refreshToken", ""); // Clear token in memory
-//             navigate("/login");
-//             toast.warning("Session expired.");
-//             return Promise.reject(refreshError);
-//           }
-//         }
-//       }
-//       return Promise.reject(error);
-//     }
-//   );
-
-//   const handleLayer = async (
-//     url: string,
-//     payload: Payload,
-//     type: "get" | "post" | "put" | "delete"
-//   ): Promise<AxiosResponse> => {
-//     const requestOptions: AxiosRequestConfig = {
-//       method: type.toUpperCase(),
-//       url,
-//       params: payload.params,
-//       data: payload.data,
-//       headers: { Authorization: `Bearer ${accessToken}` }, // Set token dynamically here
-//       withCredentials: true, // Ensure credentials are included in the request
-//     };
-
-//     const response = await axiosInstance(requestOptions);
-//     return response;
-//   };
-
-//   const handleResponse = async ({ url, type, payload }: HeaderStructure) => {
-//     const response = await handleLayer(url, payload, type);
-//     return response.data;
-//   };
-
-//   return { handleResponse };
-// };
-
-// export { useResponseHandler };

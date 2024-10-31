@@ -1,33 +1,21 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { RouterProvider } from "react-router-dom";
-import { createRoutes } from "./Routes/Routes";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
-import { ThemeProvider } from "./components/theme-provider";
+import { AppProviders } from "./providers/app-providers";
+import { StrictMode } from "react";
+import { App } from "./App";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+const container = document.getElementById("root");
 
-const App = () => {
-  const [isDark, setIsDark] = useState(false);
+if (!container) {
+  throw new Error("Failed to find the root element");
+}
 
-  const routes = createRoutes(isDark, setIsDark);
+const root = createRoot(container);
 
-  return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={routes} />
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-      </QueryClientProvider>
-    </ThemeProvider>
-  );
-};
-
-createRoot(document.getElementById("root")!).render(<App />);
+root.render(
+  <StrictMode>
+    <AppProviders>
+      <App />
+    </AppProviders>
+  </StrictMode>
+);

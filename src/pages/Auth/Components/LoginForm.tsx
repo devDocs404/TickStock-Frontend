@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Eye, EyeOff, Link } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { ForgetPassword } from "./ForgetPassword";
 import { ModeToggle } from "@/components/Global/ModeToggle";
 import { Input } from "@/components/ui/input";
@@ -13,8 +13,6 @@ import { Button } from "@/components/ui/button";
 const LoginForm = ({
   onToggle,
   setLoadingState,
-  setIsDark,
-  isDark,
 }: {
   onToggle: () => void;
   setLoadingState: (state: boolean) => void;
@@ -54,7 +52,7 @@ const LoginForm = ({
   };
   useEffect(() => {
     setLoadingState(isPending);
-  }, [isPending]);
+  }, [isPending, setLoadingState]);
 
   return (
     <>
