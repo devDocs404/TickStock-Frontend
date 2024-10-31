@@ -1,18 +1,18 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
-import ProtectedRoutes from "./ProtectedRoutes";
-import Dashboard from "../pages/Dashboard/Dashboard";
-import Template from "../pages/Template";
-import WorkInProgress from "./WorkInProgress";
-import AuthenticationPage from "../pages/Auth/AuthenticationPage";
-import Portfolio from "@/pages/Portfolio/Portfolio";
-import PortfolioStocks from "@/pages/Portfolio/portfolio-stocks";
-import EmailVerifiedCard from "@/pages/Auth/email-verify";
-import PasswordReset from "@/pages/Auth/reset-password";
+import { createBrowserRouter, Outlet } from 'react-router-dom';
+import ProtectedRoutes from './ProtectedRoutes';
+import Dashboard from '../pages/Dashboard/Dashboard';
+import Template from '../pages/Template';
+import WorkInProgress from './WorkInProgress';
+import AuthenticationPage from '../pages/Auth/AuthenticationPage';
+import Portfolio from '@/pages/Portfolio/Portfolio';
+import PortfolioStocks from '@/pages/Portfolio/portfolio-stocks';
+import EmailVerifiedCard from '@/pages/Auth/email-verify';
+import PasswordReset from '@/pages/Auth/reset-password';
 
 const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
   return createBrowserRouter([
     {
-      path: "/",
+      path: '/',
       element: (
         <ProtectedRoutes>
           <Template setIsDark={setIsDark} isDark={isDark} />
@@ -20,7 +20,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
       ),
       children: [
         {
-          path: "/",
+          path: '/',
           element: (
             <ProtectedRoutes>
               <Dashboard isDark={isDark} />
@@ -29,7 +29,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
           index: true,
         },
         {
-          path: "/portfolio",
+          path: '/portfolio',
           element: (
             <ProtectedRoutes>
               <Outlet />
@@ -37,7 +37,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
           ),
           children: [
             {
-              path: "/portfolio/baskets",
+              path: '/portfolio/baskets',
               index: true, // Default child route for "/portfolio"
               element: (
                 <ProtectedRoutes>
@@ -46,7 +46,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
               ),
             },
             {
-              path: "/portfolio/stocks",
+              path: '/portfolio/stocks',
               index: true, // Default child route for "/portfolio"
               element: (
                 <ProtectedRoutes>
@@ -57,7 +57,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
           ],
         },
         {
-          path: "/p&l",
+          path: '/p&l',
           element: (
             <ProtectedRoutes>
               <Dashboard isDark={isDark} />
@@ -66,7 +66,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
           index: true,
         },
         {
-          path: "/account",
+          path: '/account',
           element: (
             <ProtectedRoutes>
               <Dashboard isDark={isDark} />
@@ -77,19 +77,19 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
       ],
     },
     {
-      path: "*",
+      path: '*',
       element: <WorkInProgress />,
     },
     {
-      path: "/login",
+      path: '/login',
       element: <AuthenticationPage setIsDark={setIsDark} isDark={isDark} />,
     },
     {
-      path: "/verify-account/:id",
+      path: '/verify-account/:id',
       element: <EmailVerifiedCard />,
     },
     {
-      path: "/reset-password/:id",
+      path: '/reset-password/:id',
       element: <PasswordReset />,
     },
   ]);

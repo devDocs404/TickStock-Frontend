@@ -1,9 +1,9 @@
-import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
-import { useResponseHandler } from "../Context/UseResponseHandler";
-import { keepPreviousData } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useAuthStore } from "@/Store/AuthStore";
-import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useResponseHandler } from '../Context/UseResponseHandler';
+import { keepPreviousData } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/Store/AuthStore';
+import { useNavigate } from 'react-router-dom';
 
 interface Authorization {
   accessToken: string;
@@ -27,8 +27,8 @@ export function useLoginPost() {
       };
       // Ensure handleResponse returns the expected type
       const response = await handleResponse<LoginResponse>({
-        url: "login",
-        type: "post",
+        url: 'login',
+        type: 'post',
         payload: {
           ...uploadPayload,
           data: uploadPayload.data as Record<string, unknown>,
@@ -36,12 +36,12 @@ export function useLoginPost() {
       });
       return response.data;
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       toast.success(`Login successful.`);
-      setField("user", response.userInfo);
-      setField("refreshToken", response.authorization.refreshToken);
-      setField("accessToken", response.authorization.accessToken);
-      navigate("/");
+      setField('user', response.userInfo);
+      setField('refreshToken', response.authorization.refreshToken);
+      setField('accessToken', response.authorization.accessToken);
+      navigate('/');
     },
   });
 }
@@ -57,8 +57,8 @@ export function useForgetPasswordPost() {
         data: payload.data,
       };
       return await handleResponse({
-        url: "forget-password",
-        type: "post",
+        url: 'forget-password',
+        type: 'post',
         payload: {
           ...uploadPayload,
           data: uploadPayload.data as Record<string, unknown>,
@@ -67,7 +67,7 @@ export function useForgetPasswordPost() {
     },
     onSuccess: (
       _: unknown,
-      payload: { data: { email: string }; successTrigger: () => void }
+      payload: { data: { email: string }; successTrigger: () => void },
     ) => {
       payload.successTrigger();
       toast.success(`Your reset password link has been sent to your email.`);
@@ -89,7 +89,7 @@ export function useResetPasswordPatch() {
       };
       return await handleResponse({
         url: `/edit-user/${payload.params.id}`,
-        type: "patch",
+        type: 'patch',
         payload: {
           ...uploadPayload,
           data: uploadPayload.data as Record<string, unknown>,
@@ -102,7 +102,7 @@ export function useResetPasswordPatch() {
         data: { password: string };
         params: { id: string };
         successTrigger: () => void;
-      }
+      },
     ) => {
       payload.successTrigger();
       toast.success(`Password reset successfully.`);
@@ -127,15 +127,15 @@ export function useSignupPost({
   return useMutation({
     mutationFn: async (payload: SignupPayload) => {
       return await handleResponse({
-        url: "signup",
-        type: "post",
+        url: 'signup',
+        type: 'post',
         payload: { data: { ...payload } },
       });
     },
     onSuccess: () => {
       setIsLogin(true);
       toast.success(
-        `Mail has been sent to your email. Please verify your email.`
+        `Mail has been sent to your email. Please verify your email.`,
       );
     },
   });
@@ -154,20 +154,20 @@ interface VerifyEmailResponse {
 }
 
 export function useVerifyEmail(
-  payload: VerifyEmailPayload
+  payload: VerifyEmailPayload,
 ): UseQueryResult<VerifyEmailResponse, Error> {
   const { handleResponse } = useResponseHandler();
 
   return useQuery<VerifyEmailResponse, Error>({
-    queryKey: ["verifyEmail", payload.params.id],
+    queryKey: ['verifyEmail', payload.params.id],
     queryFn: async () => {
       const url = `verify-account/${payload.params.id}`;
       try {
         const response = await handleResponse<string>({
           url,
-          type: "get",
+          type: 'get',
         });
-        console.log(response, "response");
+        console.log(response, 'response');
         return {
           message: response.data,
           status: response.status,
@@ -175,9 +175,9 @@ export function useVerifyEmail(
       } catch (error) {
         // Handle the error properly
         if (error instanceof Error) {
-          throw new Error(error.message || "An unexpected error occurred");
+          throw new Error(error.message || 'An unexpected error occurred');
         } else {
-          throw new Error("An unexpected error occurred");
+          throw new Error('An unexpected error occurred');
         }
       }
     },

@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createStockSchema } from "@/schema";
-import { z } from "zod";
+import { Button } from '@/components/ui/button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createStockSchema } from '@/schema';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -10,26 +10,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { useEffect, useState } from "react";
+} from '@/components/ui/form';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   useCreateStockPost,
   useFetchTickersData,
-} from "@/Queries/portfolio-queries";
-import { StocksType } from "../portfolio-utils/types";
-import { stockBrokers } from "@/lib/utils";
-import { usePortfolioStore } from "@/Store/PortfolioStore";
-import dayjs from "dayjs";
-import { Textarea } from "@/components/ui/textarea";
-import FormSelectField from "@/components/ui/forms/form-select-field";
-import FormInput from "@/components/ui/forms/form-input-field";
-import FormFieldCalendar from "@/components/ui/forms/form-datepicker-field";
+} from '@/Queries/portfolio-queries';
+import { StocksType } from '../portfolio-utils/types';
+import { stockBrokers } from '@/lib/utils';
+import { usePortfolioStore } from '@/Store/PortfolioStore';
+import dayjs from 'dayjs';
+import { Textarea } from '@/components/ui/textarea';
+import FormSelectField from '@/components/ui/forms/form-select-field';
+import FormInput from '@/components/ui/forms/form-input-field';
+import FormFieldCalendar from '@/components/ui/forms/form-datepicker-field';
 
 type OptionType = {
   label: string;
@@ -47,24 +47,24 @@ const StocksForm = ({
 }) => {
   const [pending, setPending] = useState(false);
   const { mutate: createBasket } = useCreateStockPost();
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const { data: tickersData } = useFetchTickersData(searchTerm, "1", "10");
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const { data: tickersData } = useFetchTickersData(searchTerm, '1', '10');
   const [options, setOptions] = useState<OptionType[]>([]);
   const { selectedBasketOption } = usePortfolioStore();
   const form = useForm({
     resolver: zodResolver(createStockSchema),
     defaultValues: {
-      basketId: "",
-      tickerId: editPayload?.tickerId || "",
+      basketId: '',
+      tickerId: editPayload?.tickerId || '',
       buyDate: dayjs(editPayload?.buyDate).toDate() || new Date(),
-      buyPrice: editPayload?.buyPrice || "",
-      quantity: editPayload?.quantity || "",
-      investedAmount: editPayload?.investedAmount || "",
-      brokerName: editPayload?.brokerName || "",
+      buyPrice: editPayload?.buyPrice || '',
+      quantity: editPayload?.quantity || '',
+      investedAmount: editPayload?.investedAmount || '',
+      brokerName: editPayload?.brokerName || '',
 
-      notes: editPayload?.notes || "",
+      notes: editPayload?.notes || '',
     },
-    mode: "onBlur",
+    mode: 'onBlur',
   });
   const { handleSubmit, setValue, watch, reset } = form;
   // useEffect(() => {
@@ -82,7 +82,7 @@ const StocksForm = ({
 
   useEffect(() => {
     if (tickersData) {
-      const result = tickersData.data.map((item) => ({
+      const result = tickersData.data.map(item => ({
         label: `${item.tickerName} (${item.symbolId})`,
         value: item.symbolId,
       }));
@@ -90,22 +90,22 @@ const StocksForm = ({
     }
   }, [tickersData]);
 
-  const buyPrice = watch("buyPrice");
-  const quantity = watch("quantity");
-  const investedAmount = watch("investedAmount");
-  const buyDate = watch("buyDate");
+  const buyPrice = watch('buyPrice');
+  const quantity = watch('quantity');
+  const investedAmount = watch('investedAmount');
+  const buyDate = watch('buyDate');
 
   useEffect(() => {
     if (buyPrice && quantity) {
       setValue(
-        "investedAmount",
-        (Number(buyPrice) * Number(quantity)).toString()
+        'investedAmount',
+        (Number(buyPrice) * Number(quantity)).toString(),
       );
     }
   }, [buyPrice, quantity, setValue]);
 
   const onSubmit = async (data: z.infer<typeof createStockSchema>) => {
-    console.log(data, "data");
+    console.log(data, 'data');
     setPending(true);
     if (editPayload) {
       // updateBasket({
@@ -121,7 +121,7 @@ const StocksForm = ({
         data: {
           tickerId: data.tickerId,
           basketId: selectedBasketOption.value,
-          buyDate: dayjs(data.buyDate).format("YYYY-MM-DD"),
+          buyDate: dayjs(data.buyDate).format('YYYY-MM-DD'),
           buyPrice: data.buyPrice,
           quantity: data.quantity,
           brokerName: data.brokerName,
@@ -143,19 +143,19 @@ const StocksForm = ({
         {
           tickerId: data.tickerId,
           basketId: data.basketId,
-          buyDate: dayjs(buyDate).format("YYYY-MM-DD"),
+          buyDate: dayjs(buyDate).format('YYYY-MM-DD'),
           buyPrice: data.buyPrice,
           quantity: data.quantity,
           brokerName: data.brokerName,
           investedAmount: investedAmount,
           sellDate: data.sellDate
-            ? dayjs(data.sellDate).format("YYYY-MM-DD")
+            ? dayjs(data.sellDate).format('YYYY-MM-DD')
             : null,
           sellPrice: data.sellPrice || null,
           totalReturn: data.totalReturn || null,
           totalInvestedDays: data.totalInvestedDays || null,
         },
-        "datadddddd"
+        'datadddddd',
       );
     }
     setPending(false);
@@ -163,10 +163,10 @@ const StocksForm = ({
 
   return (
     <Dialog open={isStocksDialogOpen} onOpenChange={setIsStocksDialogOpen}>
-      <DialogContent style={{ width: "95vw" }}>
+      <DialogContent style={{ width: '95vw' }}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            {editPayload ? "Edit Stock" : "Create Stock"}
+            {editPayload ? 'Edit Stock' : 'Create Stock'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -288,11 +288,11 @@ const StocksForm = ({
               >
                 {editPayload
                   ? pending
-                    ? "Updating..."
-                    : "Update"
+                    ? 'Updating...'
+                    : 'Update'
                   : pending
-                  ? "Creating..."
-                  : "Create Stock"}
+                    ? 'Creating...'
+                    : 'Create Stock'}
               </Button>
             </div>
           </form>

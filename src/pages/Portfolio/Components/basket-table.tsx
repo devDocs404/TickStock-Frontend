@@ -5,10 +5,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+} from '@/components/ui/table';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface Basket {
   id: string;
@@ -41,7 +41,7 @@ const BasketTable = ({
     </TableHeader>
     <TableBody>
       <AnimatePresence>
-        {baskets.map((basket) => (
+        {baskets.map(basket => (
           <motion.tr
             key={basket.id}
             initial={{ opacity: 0 }}
@@ -51,7 +51,7 @@ const BasketTable = ({
           >
             <TableCell>{basket.name}</TableCell>
             <TableCell>
-              {stocks.filter((stock) => stock.basketId === basket.id).length}
+              {stocks.filter(stock => stock.basketId === basket.id).length}
             </TableCell>
             <TableCell>
               <div className="flex space-x-2">

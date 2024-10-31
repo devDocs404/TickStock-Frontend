@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -10,7 +10,7 @@ import {
   VisibilityState,
   Table as ReactTable,
   Row,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -19,18 +19,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
-import { Button } from "../ui/button";
-import { PaginationType } from "@/Queries/queries-utils/types";
-import { Checkbox } from "../ui/checkbox";
-import { SearchInput } from "./search-input";
+import { Button } from '../ui/button';
+import { PaginationType } from '@/Queries/queries-utils/types';
+import { Checkbox } from '../ui/checkbox';
+import { SearchInput } from './search-input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -38,7 +38,7 @@ interface DataTableProps<TData, TValue> {
   onRowSelectionChange?: (selectedRows: TData[]) => void;
   pagination?: {
     metadata: PaginationType | undefined;
-    currentPage: string | "1";
+    currentPage: string | '1';
     setCurrentPage: (currentPage: string) => void;
   };
   search?: {
@@ -63,13 +63,13 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
-  const [totalItems, setTotalItems] = useState("0");
+  const [totalItems, setTotalItems] = useState('0');
 
   useEffect(() => {
     if (pagination?.metadata) {
       setHasNextPage(pagination?.metadata?.hasNextPage || false);
       setHasPreviousPage(pagination?.metadata?.hasPreviousPage || false);
-      setTotalItems(pagination?.metadata?.totalItems || "0");
+      setTotalItems(pagination?.metadata?.totalItems || '0');
     }
   }, [pagination]);
 
@@ -78,14 +78,14 @@ export function DataTable<TData, TValue>({
     ...(onRowSelectionChange
       ? [
           {
-            id: "select",
+            id: 'select',
             header: ({ table }: { table: ReactTable<TData> }) => (
               <Checkbox
                 checked={
                   table.getIsAllPageRowsSelected() ||
-                  (table.getIsSomePageRowsSelected() && "indeterminate")
+                  (table.getIsSomePageRowsSelected() && 'indeterminate')
                 }
-                onCheckedChange={(value) =>
+                onCheckedChange={value =>
                   table.toggleAllPageRowsSelected(!!value)
                 }
                 aria-label="Select all"
@@ -94,7 +94,7 @@ export function DataTable<TData, TValue>({
             cell: ({ row }: { row: Row<TData> }) => (
               <Checkbox
                 checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onCheckedChange={value => row.toggleSelected(!!value)}
                 aria-label="Select row"
               />
             ),
@@ -125,7 +125,7 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     const selectedRows = table
       .getSelectedRowModel()
-      .rows.map((row) => row.original);
+      .rows.map(row => row.original);
     onRowSelectionChange?.(selectedRows);
   }, [rowSelection, onRowSelectionChange, table]);
 
@@ -153,18 +153,18 @@ export function DataTable<TData, TValue>({
                 {table
                   .getAllColumns()
                   .filter(
-                    (column) =>
+                    column =>
                       column.getCanHide() &&
-                      column.id !== "actions" &&
-                      column.id !== "select"
+                      column.id !== 'actions' &&
+                      column.id !== 'select',
                   )
-                  .map((column) => {
+                  .map(column => {
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}
                         className="capitalize"
                         checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
+                        onCheckedChange={value =>
                           column.toggleVisibility(!!value)
                         }
                       >
@@ -180,16 +180,16 @@ export function DataTable<TData, TValue>({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -199,16 +199,16 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

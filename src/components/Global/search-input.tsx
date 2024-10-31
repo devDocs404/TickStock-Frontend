@@ -1,7 +1,7 @@
-import { Search } from "lucide-react";
-import React, { useEffect, useState, useMemo } from "react";
-import { Input } from "../ui/input";
-import debounce from "lodash.debounce";
+import { Search } from 'lucide-react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Input } from '../ui/input';
+import debounce from 'lodash.debounce';
 
 export const SearchInput = ({
   search,
@@ -18,7 +18,7 @@ export const SearchInput = ({
       debounce((value: string) => {
         setSearchTerm(value);
       }, 500),
-    [setSearchTerm]
+    [setSearchTerm],
   );
 
   // Handle input change

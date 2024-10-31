@@ -1,29 +1,29 @@
-import { Input } from "@/components/ui/input";
-import { AnimatedText } from "./AnimatedText";
-import { motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
-import { EyeOff } from "lucide-react";
-import { useSignupPost } from "@/Queries/AuthQueries";
+import { Input } from '@/components/ui/input';
+import { AnimatedText } from './AnimatedText';
+import { motion } from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Eye } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
+import { useSignupPost } from '@/Queries/AuthQueries';
 
 const schema2 = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  firstName: z.string().min(1, { message: "Enter correct First Name." }),
-  lastName: z.string().min(1, { message: "Enter correct Last Name." }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  firstName: z.string().min(1, { message: 'Enter correct First Name.' }),
+  lastName: z.string().min(1, { message: 'Enter correct Last Name.' }),
   mobileNumber: z
     .string()
-    .min(10, { message: "Enter correct Phone Number." })
-    .max(10, { message: "Enter correct Phone Number." }),
+    .min(10, { message: 'Enter correct Phone Number.' })
+    .max(10, { message: 'Enter correct Phone Number.' }),
 });
 
 // Password validation rules for real-time UI feedback
 const passwordRules2 = [
-  { label: "At least 6 characters", regex: /^.{6,}$/ },
-  { label: "Contains at least one number", regex: /[0-9]/ },
+  { label: 'At least 6 characters', regex: /^.{6,}$/ },
+  { label: 'Contains at least one number', regex: /[0-9]/ },
   {
-    label: "Contains at least one special character",
+    label: 'Contains at least one special character',
     regex: /[!@#$%^&*(),.?":{}|<>]/,
   },
 ];
@@ -45,24 +45,24 @@ const SignupForm = ({
   setIsLogin: (state: boolean) => void;
 }) => {
   const [data, setData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    mobileNumber: "",
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    mobileNumber: '',
     isVerified: false,
     isForgetPassword: false,
   });
   const [passwordType, setPasswordType] = useState({
-    password: "password",
-    confirmPassword: "password",
+    password: 'password',
+    confirmPassword: 'password',
   });
   const { mutate, isPending } = useSignupPost({ setIsLogin });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordValidations, setPasswordValidations] = useState<
     PasswordRule[]
-  >(passwordRules2.map((rule) => ({ ...rule, valid: false })));
+  >(passwordRules2.map(rule => ({ ...rule, valid: false })));
   const [isFormValid, setIsFormValid] = useState(false);
 
   // Handle input changes
@@ -72,16 +72,16 @@ const SignupForm = ({
       [e.target.name]: e.target.value,
     });
 
-    if (e.target.name === "password") {
+    if (e.target.name === 'password') {
       handlePasswordValidation(e.target.value);
-    } else if (e.target.name === "confirmPassword") {
+    } else if (e.target.name === 'confirmPassword') {
       handlePasswordValidation(data.password);
     }
   };
 
   // Validate password dynamically for each rule
   const handlePasswordValidation = (password: string) => {
-    const updatedValidations = passwordRules2.map((rule) => ({
+    const updatedValidations = passwordRules2.map(rule => ({
       ...rule,
       valid: rule.regex.test(password),
     }));
@@ -91,11 +91,11 @@ const SignupForm = ({
 
   const validateForm = useCallback(
     (password: string, confirmPassword: string) => {
-      const allRulesSatisfied = passwordValidations.every((rule) => rule.valid);
+      const allRulesSatisfied = passwordValidations.every(rule => rule.valid);
       const passwordsMatch = password === confirmPassword;
       setIsFormValid(allRulesSatisfied && passwordsMatch);
     },
-    [passwordValidations]
+    [passwordValidations],
   );
 
   // Form submission handler
@@ -113,7 +113,7 @@ const SignupForm = ({
             acc[curr.path[0]] = curr.message;
             return acc;
           },
-          {}
+          {},
         );
         setErrors(fieldErrors);
       }
@@ -209,18 +209,18 @@ const SignupForm = ({
               onChange={handleChange}
               autoComplete="off"
             />
-            {passwordType.password === "password" ? (
+            {passwordType.password === 'password' ? (
               <EyeOff
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 onClick={() =>
-                  setPasswordType({ ...passwordType, password: "text" })
+                  setPasswordType({ ...passwordType, password: 'text' })
                 }
               />
             ) : (
               <Eye
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 onClick={() =>
-                  setPasswordType({ ...passwordType, password: "password" })
+                  setPasswordType({ ...passwordType, password: 'password' })
                 }
               />
             )}
@@ -237,11 +237,11 @@ const SignupForm = ({
               onChange={handleChange}
               className="mb-6"
             />
-            {passwordType.confirmPassword === "password" ? (
+            {passwordType.confirmPassword === 'password' ? (
               <EyeOff
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 onClick={() =>
-                  setPasswordType({ ...passwordType, confirmPassword: "text" })
+                  setPasswordType({ ...passwordType, confirmPassword: 'text' })
                 }
               />
             ) : (
@@ -250,7 +250,7 @@ const SignupForm = ({
                 onClick={() =>
                   setPasswordType({
                     ...passwordType,
-                    confirmPassword: "password",
+                    confirmPassword: 'password',
                   })
                 }
               />
@@ -263,12 +263,12 @@ const SignupForm = ({
               <div key={index} className="flex items-center space-x-2">
                 <span
                   className={`inline-block h-4 w-4 rounded-full ${
-                    rule.valid ? "bg-green-500" : "bg-red-500"
+                    rule.valid ? 'bg-green-500' : 'bg-red-500'
                   }`}
                 ></span>
                 <p
                   className={`text-sm ${
-                    rule.valid ? "text-green-600" : "text-red-600"
+                    rule.valid ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
                   {rule.label}
@@ -279,15 +279,15 @@ const SignupForm = ({
               <span
                 className={`inline-block h-4 w-4 rounded-full ${
                   isFormValid && data.confirmPassword === data.password
-                    ? "bg-green-500"
-                    : "bg-red-500"
+                    ? 'bg-green-500'
+                    : 'bg-red-500'
                 }`}
               ></span>
               <p
                 className={`text-sm ${
                   isFormValid && data.confirmPassword === data.password
-                    ? "text-green-600"
-                    : "text-red-600"
+                    ? 'text-green-600'
+                    : 'text-red-600'
                 }`}
               >
                 Password Match
@@ -309,7 +309,7 @@ const SignupForm = ({
 
       <AnimatedText delay={0.6}>
         <p className="text-center text-sm">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <button
             onClick={onToggle}
             className="text-blue-600 hover:underline font-medium"

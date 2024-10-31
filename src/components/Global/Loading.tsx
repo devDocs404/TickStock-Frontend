@@ -1,4 +1,4 @@
-import "./Components.css";
+import './Components.css';
 
 const Loading = () => {
   return (

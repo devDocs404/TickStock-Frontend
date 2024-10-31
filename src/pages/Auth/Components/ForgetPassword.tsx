@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,23 +7,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useForgetPasswordPost } from "@/Queries/AuthQueries";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { useForgetPasswordPost } from '@/Queries/AuthQueries';
 const schema = z.object({
   email: z
     .string()
-    .email({ message: "Invalid email address.Please try again." }),
+    .email({ message: 'Invalid email address.Please try again.' }),
 });
 
 export function ForgetPassword() {
   const { mutate } = useForgetPasswordPost();
   const [data, setData] = useState({
-    email: "",
+    email: '',
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -32,7 +32,7 @@ export function ForgetPassword() {
   };
 
   const successTrigger = () => {
-    setData({ email: "" });
+    setData({ email: '' });
     setIsDialogOpen(false);
   };
 
@@ -43,7 +43,7 @@ export function ForgetPassword() {
     });
 
     if (!result.success) {
-      toast.error(result.error.errors.map((error) => error.message).join(", "));
+      toast.error(result.error.errors.map(error => error.message).join(', '));
     } else {
       mutate({ data: { email: data.email }, successTrigger });
     }
