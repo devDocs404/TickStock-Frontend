@@ -1,14 +1,14 @@
-import { useLoginPost } from "@/Queries/AuthQueries";
-import { AnimatedText } from "./AnimatedText";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
-import { ForgetPassword } from "./ForgetPassword";
-import { ModeToggle } from "@/components/Global/ModeToggle";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useLoginPost } from '@/Queries/AuthQueries';
+import { AnimatedText } from './AnimatedText';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { Eye, EyeOff } from 'lucide-react';
+import { ForgetPassword } from './ForgetPassword';
+import { ModeToggle } from '@/components/Global/ModeToggle';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const LoginForm = ({
   onToggle,
@@ -20,9 +20,9 @@ const LoginForm = ({
   isDark: boolean;
 }) => {
   // State to store form data and errors
-  const [data, setData] = useState({ email: "", password: "" });
+  const [data, setData] = useState({ email: '', password: '' });
   const { mutate, isPending } = useLoginPost();
-  const [passwordType, setPasswordType] = useState("password");
+  const [passwordType, setPasswordType] = useState('password');
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -32,8 +32,8 @@ const LoginForm = ({
   };
 
   const schema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(1, { message: "Password is mandatory" }),
+    email: z.string().email({ message: 'Invalid email address' }),
+    password: z.string().min(1, { message: 'Password is mandatory' }),
   });
 
   // Form submission handler
@@ -44,9 +44,9 @@ const LoginForm = ({
       password: data.password,
     });
     if (!result.success) {
-      toast.error(result.error.errors.map((error) => error.message).join(", "));
+      toast.error(result.error.errors.map(error => error.message).join(', '));
     } else {
-      console.log("Form submitted:", data);
+      console.log('Form submitted:', data);
       mutate(data);
     }
   };
@@ -91,12 +91,12 @@ const LoginForm = ({
                 onChange={handleChange}
                 className="h-12"
               />
-              {passwordType === "password" ? (
+              {passwordType === 'password' ? (
                 <Button
                   variant="ghost"
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setPasswordType("text")}
+                  onClick={() => setPasswordType('text')}
                 >
                   <EyeOff />
                 </Button>
@@ -105,7 +105,7 @@ const LoginForm = ({
                   variant="ghost"
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setPasswordType("password")}
+                  onClick={() => setPasswordType('password')}
                 >
                   <Eye />
                 </Button>
@@ -127,7 +127,7 @@ const LoginForm = ({
 
         <AnimatedText delay={0.4}>
           <p className="text-center text-sm">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <button
               onClick={onToggle}
               className="text-blue-600 hover:underline font-medium"

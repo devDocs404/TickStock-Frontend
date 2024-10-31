@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { SearchBar } from "./Dashboard/Components/SearchBar";
-import { motion } from "framer-motion";
-import { Outlet, useLocation } from "react-router-dom";
-import { BarChart2, Wallet, User, LayoutDashboard } from "lucide-react";
-import { Sidebar } from "../components/SideBar";
-import { useGlobalStore } from "@/Store/GlobalSore";
-import { Toaster } from "sonner";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { SearchBar } from './Dashboard/Components/SearchBar';
+import { motion } from 'framer-motion';
+import { Outlet, useLocation } from 'react-router-dom';
+import { BarChart2, Wallet, User, LayoutDashboard } from 'lucide-react';
+import { Sidebar } from '../components/SideBar';
+import { useGlobalStore } from '@/Store/GlobalSore';
+import { Toaster } from 'sonner';
 
 const Template = ({
   setIsDark,
@@ -51,34 +51,34 @@ const Template = ({
 
   const menuItems = useMemo(
     () => [
-      { icon: LayoutDashboard, label: "Dashboard", url: "/" },
+      { icon: LayoutDashboard, label: 'Dashboard', url: '/' },
       {
         icon: Wallet,
-        label: "Portfolio",
-        url: "/portfolio/stocks",
+        label: 'Portfolio',
+        url: '/portfolio/stocks',
         children: [
-          { icon: BarChart2, label: "Stocks", url: "/portfolio/stocks" },
-          { icon: Wallet, label: "Baskets", url: "/portfolio/baskets" },
+          { icon: BarChart2, label: 'Stocks', url: '/portfolio/stocks' },
+          { icon: Wallet, label: 'Baskets', url: '/portfolio/baskets' },
         ],
       },
-      { icon: BarChart2, label: "Profit and Loss", url: "/p&l" },
-      { icon: User, label: "Account", url: "/account" },
+      { icon: BarChart2, label: 'Profit and Loss', url: '/p&l' },
+      { icon: User, label: 'Account', url: '/account' },
     ],
-    []
+    [],
   );
 
   useEffect(() => {
-    const pathParts = location.pathname.split("/");
+    const pathParts = location.pathname.split('/');
     const firstPart = pathParts[1];
     const foundItem = menuItems.find(
-      (item) => firstPart === item.url.split("/")[1]
+      item => firstPart === item.url.split('/')[1],
     );
     const selectedIndex = foundItem ? menuItems.indexOf(foundItem) : null;
     setActiveItem(selectedIndex);
     const checkChildUrlPath = (item: { children: { url: string }[] }) => {
       if (item.children && item.children.length > 0) {
         const childPath = item.children.find(
-          (child) => child.url === location.pathname
+          child => child.url === location.pathname,
         );
         if (childPath) {
           setActiveChildItem(item.children.indexOf(childPath));
@@ -86,7 +86,7 @@ const Template = ({
       }
     };
 
-    menuItems.forEach((item) => {
+    menuItems.forEach(item => {
       if (item.children) {
         checkChildUrlPath(item);
       }
@@ -96,20 +96,20 @@ const Template = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.ctrlKey) {
-        if (event.key == "b" || event.key === "B") {
+        if (event.key == 'b' || event.key === 'B') {
           event.preventDefault();
-          setIsOpen((prevState) => !prevState);
-        } else if (event.key == "p" || event.key === "P") {
+          setIsOpen(prevState => !prevState);
+        } else if (event.key == 'p' || event.key === 'P') {
           event.preventDefault();
           searchInputRef.current?.focus();
         }
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
   return (
@@ -134,7 +134,7 @@ const Template = ({
         >
           <div
             className={`flex w-full flex-col  overflow-hidden
-             ${isOpen ? "w-[calc(100vw-278px)]" : "w-full "}
+             ${isOpen ? 'w-[calc(100vw-278px)]' : 'w-full '}
           `}
           >
             <motion.div
@@ -142,7 +142,7 @@ const Template = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className={` flex ${
-                isOpen ? "justify-between" : "justify-end"
+                isOpen ? 'justify-between' : 'justify-end'
               } w-full p-[20px] `}
             >
               <div className=" w-full ">
@@ -160,7 +160,7 @@ const Template = ({
           </div>
           <div
             className={`w-[98%] h-[90%] m-auto shadow-2xl rounded-lg ${
-              toggleTheme === "dark" ? "bg-[#0F0F0F]" : "bg-white"
+              toggleTheme === 'dark' ? 'bg-[#0F0F0F]' : 'bg-white'
             }`}
           >
             <Outlet />

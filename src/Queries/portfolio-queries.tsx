@@ -5,39 +5,39 @@ import {
   useQueryClient,
   UseQueryResult,
   // UseQueryResult,
-} from "@tanstack/react-query";
-import { useResponseHandler } from "../Context/UseResponseHandler";
-import { keepPreviousData } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from '@tanstack/react-query';
+import { useResponseHandler } from '../Context/UseResponseHandler';
+import { keepPreviousData } from '@tanstack/react-query';
+import { toast } from 'sonner';
 // import { useAuthStore } from "@/Store/AuthStore";
 import {
   BasketType,
   StocksType,
   TickerType,
-} from "@/pages/Portfolio/portfolio-utils/types";
-import { ApiResponse } from "./queries-utils/types";
-import { dummyResponse } from "@/lib/utils";
+} from '@/pages/Portfolio/portfolio-utils/types';
+import { ApiResponse } from './queries-utils/types';
+import { dummyResponse } from '@/lib/utils';
 
 export function useFetchBasketsData(
   search: string,
   page: string,
-  size: string
+  size: string,
 ) {
   const { handleResponse } = useResponseHandler();
 
   return useQuery<ApiResponse<BasketType>, Error>({
-    queryKey: ["baskets", { search, page, size }],
+    queryKey: ['baskets', { search, page, size }],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey as [
         string,
-        { search: string; page: string; size: string }
+        { search: string; page: string; size: string },
       ];
       const { search, page, size } = params;
 
       const url = `protected/basket`;
       const response = await handleResponse<ApiResponse<BasketType>>({
         url,
-        type: "get",
+        type: 'get',
         payload: { params: { search, page, size } },
       });
       return response.data;
@@ -50,23 +50,23 @@ export function useFetchBasketsData(
 export function useFetchTickersData(
   search: string,
   page: string,
-  size: string
+  size: string,
 ) {
   const { handleResponse } = useResponseHandler();
 
   return useQuery<ApiResponse<TickerType>, Error>({
-    queryKey: ["tickers", { search, page, size }],
+    queryKey: ['tickers', { search, page, size }],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey as [
         string,
-        { search: string; page: string; size: string }
+        { search: string; page: string; size: string },
       ];
       const { search, page, size } = params;
 
       const url = `protected/ticker`;
       const response = await handleResponse<ApiResponse<TickerType>>({
         url,
-        type: "get",
+        type: 'get',
         payload: { params: { search, page, size } },
       });
       return response.data;
@@ -80,27 +80,27 @@ export function useFetchStocksData(
   search: string,
   page: string,
   size: string,
-  basketId: string
+  basketId: string,
 ): UseQueryResult<ApiResponse<StocksType>, Error> {
   const { handleResponse } = useResponseHandler();
 
   return useQuery<ApiResponse<StocksType>, Error>({
-    queryKey: ["stocks", { search, page, size, basketId }],
+    queryKey: ['stocks', { search, page, size, basketId }],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey as [
         string,
-        { search: string; page: string; size: string; basketId: string }
+        { search: string; page: string; size: string; basketId: string },
       ];
       const { search, page, size, basketId } = params;
 
-      if (basketId === "") {
+      if (basketId === '') {
         return dummyResponse as ApiResponse<StocksType>;
       }
 
       const url = `protected/stocks`;
       const response = await handleResponse<ApiResponse<StocksType>>({
         url,
-        type: "get",
+        type: 'get',
         payload: { params: { search, page, size, basketId } },
       });
       return response.data;
@@ -124,8 +124,8 @@ export function useCreateBasketPost() {
         data: payload.data,
       };
       return await handleResponse({
-        url: "protected/basket/",
-        type: "post",
+        url: 'protected/basket/',
+        type: 'post',
         payload: {
           ...uploadPayload,
           data: uploadPayload.data as Record<string, unknown>,
@@ -137,7 +137,7 @@ export function useCreateBasketPost() {
       payload: {
         data: { basketName: string };
         successTrigger: () => void;
-      }
+      },
     ) => {
       payload.successTrigger();
       toast.success(`Basket created successfully.`);
@@ -147,7 +147,7 @@ export function useCreateBasketPost() {
         console.log(error);
       } else {
         await queryClient.invalidateQueries({
-          queryKey: ["baskets"],
+          queryKey: ['baskets'],
         });
       }
     },
@@ -169,7 +169,7 @@ export function useUpdateBasketPatch() {
       };
       return await handleResponse({
         url: `protected/basket/${payload.params.id}`,
-        type: "patch",
+        type: 'patch',
         payload: {
           ...uploadPayload,
           data: uploadPayload.data,
@@ -182,7 +182,7 @@ export function useUpdateBasketPatch() {
         data: { basketName: string };
         successTrigger: () => void;
         params: { id: string };
-      }
+      },
     ) => {
       payload.successTrigger();
       toast.success(`Basket updated successfully.`);
@@ -192,7 +192,7 @@ export function useUpdateBasketPatch() {
         console.log(error);
       } else {
         await queryClient.invalidateQueries({
-          queryKey: ["baskets"],
+          queryKey: ['baskets'],
         });
       }
     },
@@ -210,7 +210,7 @@ export function useDeleteBasketPatch() {
     }) => {
       return await handleResponse({
         url: `protected/basket/${payload.params.id}`,
-        type: "delete",
+        type: 'delete',
         payload: undefined,
       });
     },
@@ -219,7 +219,7 @@ export function useDeleteBasketPatch() {
       payload: {
         successTrigger: () => void;
         params: { id: string };
-      }
+      },
     ) => {
       payload.successTrigger();
       toast.success(`Basket deleted successfully.`);
@@ -229,7 +229,7 @@ export function useDeleteBasketPatch() {
         console.log(error);
       } else {
         await queryClient.invalidateQueries({
-          queryKey: ["baskets"],
+          queryKey: ['baskets'],
         });
       }
     },
@@ -246,8 +246,8 @@ export function useCreateStockPost() {
       successTrigger: () => void;
     }) => {
       return await handleResponse({
-        url: "protected/stock",
-        type: "post",
+        url: 'protected/stock',
+        type: 'post',
         payload: {
           data: payload.data,
         },
@@ -258,7 +258,7 @@ export function useCreateStockPost() {
       payload: {
         data: StocksType;
         successTrigger: () => void;
-      }
+      },
     ) => {
       payload.successTrigger();
       toast.success(`Stock added successfully.`);
@@ -268,7 +268,7 @@ export function useCreateStockPost() {
         console.log(error);
       } else {
         await queryClient.invalidateQueries({
-          queryKey: ["stocks"],
+          queryKey: ['stocks'],
         });
       }
     },

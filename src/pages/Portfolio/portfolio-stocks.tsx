@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { FilePenLine, MoreHorizontal, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import BasketForm from "./Components/basket-form";
-import { DataTable } from "@/components/Global/data-table";
-import { ColumnDef } from "@tanstack/react-table";
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { FilePenLine, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BasketForm from './Components/basket-form';
+import { DataTable } from '@/components/Global/data-table';
+import { ColumnDef } from '@tanstack/react-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,21 +13,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   useFetchBasketsData,
   useFetchStocksData,
-} from "@/Queries/portfolio-queries";
-import { StocksType } from "./portfolio-utils/types";
-import CustomSelect from "@/components/ui/custom-select";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { usePortfolioStore } from "@/Store/PortfolioStore";
-import StocksForm from "./Components/stocks-form";
+} from '@/Queries/portfolio-queries';
+import { StocksType } from './portfolio-utils/types';
+import CustomSelect from '@/components/ui/custom-select';
+import { formatCurrency, formatDate } from '@/lib/utils';
+import { usePortfolioStore } from '@/Store/PortfolioStore';
+import StocksForm from './Components/stocks-form';
 
 const PortfolioStocks = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchStocksTerm, setSearchStocksTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState("1");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchStocksTerm, setSearchStocksTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState('1');
   const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false);
   const [isStocksDialogOpen, setIsStocksDialogOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<
@@ -41,32 +41,32 @@ const PortfolioStocks = () => {
   const { data: basketsData } = useFetchBasketsData(
     searchTerm,
     currentPage.toString(),
-    "10"
+    '10',
   );
   const { data: stocksData } = useFetchStocksData(
-    "",
+    '',
     currentPage.toString(),
-    "10",
-    selectedOption?.value || ""
+    '10',
+    selectedOption?.value || '',
   );
 
   const columns: ColumnDef<StocksType>[] = [
     {
-      id: "Ticker",
-      accessorKey: "tickerId",
-      header: "Ticker Name",
+      id: 'Ticker',
+      accessorKey: 'tickerId',
+      header: 'Ticker Name',
       cell: ({ row }) => <div>{row.original.tickerId}</div>,
     },
     {
-      id: "Buy Date",
-      accessorKey: "buyDate",
-      header: "Buy Date",
+      id: 'Buy Date',
+      accessorKey: 'buyDate',
+      header: 'Buy Date',
       cell: ({ row }) => <div>{formatDate(row.original.buyDate)}</div>,
     },
     {
-      id: "Buy Price",
-      accessorKey: "buyPrice",
-      header: "Buy Price",
+      id: 'Buy Price',
+      accessorKey: 'buyPrice',
+      header: 'Buy Price',
       cell: ({ row }) => (
         <div className="font-medium">
           {formatCurrency(row.original.buyPrice)}
@@ -74,9 +74,9 @@ const PortfolioStocks = () => {
       ),
     },
     {
-      id: "Invested Amount",
-      accessorKey: "investedAmount",
-      header: "Invested Amount",
+      id: 'Invested Amount',
+      accessorKey: 'investedAmount',
+      header: 'Invested Amount',
       cell: ({ row }) => (
         <div className="font-medium">
           {formatCurrency(row.original.investedAmount)}
@@ -84,13 +84,13 @@ const PortfolioStocks = () => {
       ),
     },
     {
-      id: "Broker Name",
-      accessorKey: "brokerName",
-      header: "Broker Name",
+      id: 'Broker Name',
+      accessorKey: 'brokerName',
+      header: 'Broker Name',
       cell: ({ row }) => <div>{row.original.brokerName}</div>,
     },
     {
-      id: "actions",
+      id: 'actions',
       cell: () => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -120,22 +120,22 @@ const PortfolioStocks = () => {
     },
   ];
   const [options, setOptions] = useState<{ label: string; value: string }[]>(
-    []
+    [],
   );
   const { selectedBasketOption, setField } = usePortfolioStore();
   useEffect(() => {
     if (basketsData) {
-      const result = basketsData.data.map((item) => ({
+      const result = basketsData.data.map(item => ({
         label: item.basketName,
         value: item.id,
       }));
-      console.log(result, "result");
+      console.log(result, 'result');
       setOptions(result);
       const checkIfIdExists = result.find(
-        (item) => item?.value === selectedBasketOption?.value
+        item => item?.value === selectedBasketOption?.value,
       );
-      if (checkIfIdExists === undefined && selectedBasketOption?.value === "") {
-        setField("selectedBasketOption", result[0]);
+      if (checkIfIdExists === undefined && selectedBasketOption?.value === '') {
+        setField('selectedBasketOption', result[0]);
       }
     }
   }, [basketsData, selectedBasketOption, setField]);
@@ -184,14 +184,14 @@ const PortfolioStocks = () => {
             <CustomSelect
               options={options}
               value={selectedOption}
-              onChange={(value) => {
+              onChange={value => {
                 setSelectedOption(value);
                 setField(
-                  "selectedBasketOption",
+                  'selectedBasketOption',
                   value as {
                     label: string;
                     value: string;
-                  }
+                  },
                 );
               }}
               label="Basket"

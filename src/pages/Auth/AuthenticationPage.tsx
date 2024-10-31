@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, DollarSign, BarChart2 } from "lucide-react";
-import SignupForm from "./Components/Signup";
-import LoginForm from "./Components/LoginForm";
-import { AnimatedText } from "./Components/AnimatedText";
-import Background from "./Components/Background";
-import FeatureCard from "./Components/FeatureCard";
-import StockTicker from "./Components/StockTicker";
-import { Toaster } from "sonner";
-import Loading from "@/components/Global/Loading";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { TrendingUp, DollarSign, BarChart2 } from 'lucide-react';
+import SignupForm from './Components/Signup';
+import LoginForm from './Components/LoginForm';
+import { AnimatedText } from './Components/AnimatedText';
+import Background from './Components/Background';
+import FeatureCard from './Components/FeatureCard';
+import StockTicker from './Components/StockTicker';
+import { Toaster } from 'sonner';
+import Loading from '@/components/Global/Loading';
 
 const Logo = () => (
   <motion.div
@@ -33,26 +33,26 @@ export default function AuthenticationPage({
   const [loadingState, setLoadingState] = useState(false);
 
   const toggleForm = () => {
-    setIsLogin((prevIsLogin) => !prevIsLogin);
+    setIsLogin(prevIsLogin => !prevIsLogin);
   };
   const featureCardsData = [
     {
       icon: TrendingUp,
-      title: "Track Performance",
+      title: 'Track Performance',
       description:
-        "Monitor your investments in real-time with advanced charting tools.",
+        'Monitor your investments in real-time with advanced charting tools.',
     },
     {
       icon: DollarSign,
-      title: "Manage Portfolios",
+      title: 'Manage Portfolios',
       description:
-        "Create and manage multiple portfolios to diversify your investments.",
+        'Create and manage multiple portfolios to diversify your investments.',
     },
     {
       icon: BarChart2,
-      title: "Analyze Trends",
+      title: 'Analyze Trends',
       description:
-        "Get insights on market trends and make informed investment decisions.",
+        'Get insights on market trends and make informed investment decisions.',
     },
   ];
 
@@ -67,12 +67,12 @@ export default function AuthenticationPage({
         <Logo />
         <div
           className={`w-full md:w-1/2 flex items-center justify-center p-12 relative z-10 ${
-            isLogin && "flex justify-center items-center"
+            isLogin && 'flex justify-center items-center'
           }`}
         >
           <div
             className={`w-full h-[774px] max-w-md ${
-              isLogin && "flex justify-center items-center w-full"
+              isLogin && 'flex justify-center items-center w-full'
             }`}
           >
             <AnimatePresence mode="wait">
