@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { toast } from "sonner";
-import { useAuthStore } from "../Store/AuthStore";
+import { useNavigate } from 'react-router-dom';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { toast } from 'sonner';
+import { useAuthStore } from '../Store/AuthStore';
 
 interface Payload {
   params?: object;
@@ -11,7 +11,7 @@ interface Payload {
 interface HeaderStructure {
   url: string;
   payload?: Payload;
-  type: "get" | "post" | "put" | "delete" | "patch";
+  type: 'get' | 'post' | 'put' | 'delete' | 'patch';
 }
 interface ResponseWithStatus<T> {
   data: T;
@@ -21,24 +21,24 @@ interface ResponseWithStatus<T> {
 const useResponseHandler = () => {
   const { refreshToken, accessToken } = useAuthStore();
   const navigate = useNavigate();
-  const baseURL = "https://www.api.tickstock.muzakkir.dev/";
+  const baseURL = 'https://www.api.tickstock.muzakkir.dev/';
   // const baseURL = " http://127.0.0.1:8787";
 
   const axiosInstance: AxiosInstance = axios.create({
     baseURL,
     withCredentials: true,
     headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "X-Requested-With": "XMLHttpRequest",
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
     },
   });
 
   axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
+    response => response,
+    async error => {
       const originalRequest = error.config;
-      console.log(error, "originalRequest");
+      console.log(error, 'originalRequest');
       if (
         axios.isAxiosError(error) &&
         error.response?.status === 401 &&
@@ -49,14 +49,14 @@ const useResponseHandler = () => {
           try {
             const refreshResponse = await axios.post(
               `${baseURL}auth/refresh-token`,
-              { refreshToken }
+              { refreshToken },
             );
             const newAccessToken = refreshResponse.data.accessToken;
             // setField("accessToken", newAccessToken);
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return axiosInstance(originalRequest);
           } catch (refreshError) {
-            console.error("Token refresh failed:", refreshError);
+            console.error('Token refresh failed:', refreshError);
             handleAuthError();
             throw refreshError;
           }
@@ -67,18 +67,18 @@ const useResponseHandler = () => {
       }
 
       throw error;
-    }
+    },
   );
 
   const handleAuthError = () => {
-    navigate("/login");
-    toast.warning("Session expired. Please log in again.");
+    navigate('/login');
+    toast.warning('Session expired. Please log in again.');
   };
 
   const handleLayer = async (
     url: string,
     payload: Payload = {},
-    type: HeaderStructure["type"]
+    type: HeaderStructure['type'],
   ): Promise<AxiosResponse> => {
     const requestOptions: AxiosRequestConfig = {
       method: type,
@@ -104,15 +104,15 @@ const useResponseHandler = () => {
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "An error occurred");
+        toast.error(error.response?.data?.message || 'An error occurred');
         throw {
-          message: error.response?.data?.message || "An error occurred",
+          message: error.response?.data?.message || 'An error occurred',
           status: error.response?.status,
         };
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error('An unexpected error occurred');
         throw {
-          message: "An unexpected error occurred",
+          message: 'An unexpected error occurred',
           status: 500,
         };
       }

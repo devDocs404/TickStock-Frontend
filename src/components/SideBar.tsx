@@ -1,14 +1,14 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LogOut,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   ChevronUp,
-} from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
-import { useNavigate } from "react-router-dom";
-import { useGlobalStore } from "@/Store/GlobalSore";
+} from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
+import { useNavigate } from 'react-router-dom';
+import { useGlobalStore } from '@/Store/GlobalSore';
 
 interface MenuItem {
   icon: React.ElementType;
@@ -52,26 +52,26 @@ const Sidebar = ({
       animate={{ width: isOpen ? 256 : 64 }}
       transition={{ duration: 0.3 }}
       className={`${
-        toggleTheme === "dark"
-          ? "bg-black-900"
+        toggleTheme === 'dark'
+          ? 'bg-black-900'
           : // : "bg-[linear-gradient(to_top,_#EDE8FC_0%,_white_100%)]"
-            "bg-[#F5F5F5]"
+            'bg-[#F5F5F5]'
       }  flex flex-col h-full`}
     >
       <div
         className={`p-4 flex items-center ${
-          isOpen ? "justify-between" : "justify-center"
+          isOpen ? 'justify-between' : 'justify-center'
         }`}
       >
         <motion.div
           initial={false}
-          animate={{ opacity: isOpen ? 1 : 0, width: isOpen ? "auto" : 0 }}
+          animate={{ opacity: isOpen ? 1 : 0, width: isOpen ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
           className="flex items-center overflow-hidden"
         >
           <div
             className={`w-10 h-10 ${
-              toggleTheme === "dark" ? "bg-blue-400" : "bg-blue-600"
+              toggleTheme === 'dark' ? 'bg-blue-400' : 'bg-blue-600'
             } rounded-full mr-3 flex-shrink-0`}
           ></div>
           <h1 className={`text-2xl font-bold whitespace-nowrap`}>
@@ -81,9 +81,9 @@ const Sidebar = ({
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`p-2 rounded-full ${
-            toggleTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-200"
+            toggleTheme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
           } transition-colors duration-200`}
-          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+          aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {isOpen ? (
             <ChevronLeft
@@ -98,25 +98,25 @@ const Sidebar = ({
           )}
         </button>
       </div>
-      <nav className={`flex-grow m-4 ${isOpen ? "h-[84vh]" : "h-[79vh]"}`}>
+      <nav className={`flex-grow m-4 ${isOpen ? 'h-[84vh]' : 'h-[79vh]'}`}>
         {menuItems.map((item, index) => (
           <>
             {/* </> */}
             <div key={item.label}>
               <motion.a
                 className={`flex items-center ${
-                  isOpen && "justify-between"
+                  isOpen && 'justify-between'
                 } cursor-pointer ${
-                  isOpen ? "py-2 px-4 my-3" : "py-2 my-3"
+                  isOpen ? 'py-2 px-4 my-3' : 'py-2 my-3'
                 } rounded-lg transition-colors duration-200 ${
                   activeItem === index
-                    ? toggleTheme === "dark"
-                      ? "bg-gray-700 text-blue-400"
-                      : "bg-[#7091E6] font-medium text-[#030303]"
-                    : toggleTheme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700"
-                    : "text-gray-700 hover:bg-blue-50"
-                } ${isOpen ? "" : "justify-center"}`}
+                    ? toggleTheme === 'dark'
+                      ? 'bg-gray-700 text-blue-400'
+                      : 'bg-[#7091E6] font-medium text-[#030303]'
+                    : toggleTheme === 'dark'
+                      ? 'text-gray-300 hover:bg-gray-700'
+                      : 'text-gray-700 hover:bg-blue-50'
+                } ${isOpen ? '' : 'justify-center'}`}
                 onClick={() => {
                   setActiveItem(index);
                   navigate(item.url);
@@ -126,15 +126,15 @@ const Sidebar = ({
               >
                 <div className="flex items-center">
                   <item.icon
-                    className={isOpen ? "mr-3" : ""}
-                    width={"24px"}
-                    height={"24px"}
+                    className={isOpen ? 'mr-3' : ''}
+                    width={'24px'}
+                    height={'24px'}
                   />
                   <AnimatePresence>
                     {isOpen && (
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: "auto" }}
+                        animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
                         transition={{ duration: 0.2 }}
                         className="whitespace-nowrap overflow-hidden"
@@ -171,13 +171,13 @@ const Sidebar = ({
                         key={child.label}
                         className={`ml-6 mt-2 p-2 rounded-lg transition-colors duration-200 cursor-pointer  ${
                           activeChildItem === childIndex
-                            ? toggleTheme === "dark"
-                              ? "bg-gray-400 text-blue-200"
-                              : "text-[#030303] font-semibold bg-blue-100"
-                            : toggleTheme === "dark"
-                            ? "text-gray-300 hover:bg-grey-700"
-                            : "text-[#212121] weight-bold  hover:bg-blue-50"
-                        } ${isOpen ? "" : "justify-center"}`}
+                            ? toggleTheme === 'dark'
+                              ? 'bg-gray-400 text-blue-200'
+                              : 'text-[#030303] font-semibold bg-blue-100'
+                            : toggleTheme === 'dark'
+                              ? 'text-gray-300 hover:bg-grey-700'
+                              : 'text-[#212121] weight-bold  hover:bg-blue-50'
+                        } ${isOpen ? '' : 'justify-center'}`}
                         onClick={() => {
                           navigate(child.url);
                           setActiveChildItem(childIndex);
@@ -195,31 +195,31 @@ const Sidebar = ({
       <div
         className={`p-4 ${
           isOpen
-            ? "flex justify-between items-center"
-            : "flex flex-col items-center space-y-4"
+            ? 'flex justify-between items-center'
+            : 'flex flex-col items-center space-y-4'
         }`}
       >
         <ThemeToggle />
         <motion.button
           className={`flex items-center p-2 rounded-lg ${
-            toggleTheme === "dark"
-              ? "text-red-400 hover:bg-gray-700"
-              : "text-red-600 hover:bg-red-50"
-          } transition-colors duration-200 ${isOpen ? "" : "justify-center"}`}
+            toggleTheme === 'dark'
+              ? 'text-red-400 hover:bg-gray-700'
+              : 'text-red-600 hover:bg-red-50'
+          } transition-colors duration-200 ${isOpen ? '' : 'justify-center'}`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => {
-            localStorage.removeItem("persist:root");
+            localStorage.removeItem('persist:root');
             localStorage.clear();
             window.location.reload();
           }}
         >
-          <LogOut className={isOpen ? "mr-3" : ""} />
+          <LogOut className={isOpen ? 'mr-3' : ''} />
           <AnimatePresence>
             {isOpen && (
               <motion.span
                 initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
+                animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ duration: 0.2 }}
                 className="whitespace-nowrap overflow-hidden"

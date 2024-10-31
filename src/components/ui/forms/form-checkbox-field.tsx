@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 import {
   FormField,
   FormItem,
   FormControl,
   FormLabel,
-} from "@/components/ui/form";
-import { Control, FieldValues } from "react-hook-form";
-import { Checkbox } from "../checkbox";
+} from '@/components/ui/form';
+import { Control, FieldValues } from 'react-hook-form';
+import { Checkbox } from '../checkbox';
 
 interface CheckboxFieldProps<T extends FieldValues> {
   control: Control<T>;
@@ -32,7 +32,7 @@ const CheckboxField: React.FC<CheckboxFieldProps<FieldValues>> = ({
             <Checkbox
               checked={field.value as boolean}
               onCheckedChange={field.onChange}
-              className={className ? className : "rounded-md w-5 h-5"}
+              className={className ? className : 'rounded-md w-5 h-5'}
             />
           </FormControl>
           <div className="space-y-1 leading-none align-middle">

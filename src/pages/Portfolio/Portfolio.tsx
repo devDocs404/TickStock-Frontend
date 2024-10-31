@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { FilePenLine, MoreHorizontal, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import BasketForm from "./Components/basket-form";
-import { DataTable } from "@/components/Global/data-table";
-import { ColumnDef } from "@tanstack/react-table";
+import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { FilePenLine, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BasketForm from './Components/basket-form';
+import { DataTable } from '@/components/Global/data-table';
+import { ColumnDef } from '@tanstack/react-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,59 +13,59 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useFetchBasketsData } from "@/Queries/portfolio-queries";
-import { BasketType } from "./portfolio-utils/types";
+} from '@/components/ui/dropdown-menu';
+import { useFetchBasketsData } from '@/Queries/portfolio-queries';
+import { BasketType } from './portfolio-utils/types';
 
 const Portfolio = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState("1");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState('1');
   const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false);
   const [editPayload, setEditPayload] = useState<BasketType | undefined>(
-    undefined
+    undefined,
   );
 
   const { data: basketsData } = useFetchBasketsData(
     searchTerm,
     currentPage.toString(),
-    "10"
+    '10',
   );
   useEffect(() => {
     if (basketsData) {
-      console.log(basketsData, "basketsssss");
+      console.log(basketsData, 'basketsssss');
     }
   }, [basketsData]);
   const columns: ColumnDef<BasketType>[] = [
     {
-      id: "Basket Name",
-      accessorKey: "basketName",
-      header: "Basket Name",
+      id: 'Basket Name',
+      accessorKey: 'basketName',
+      header: 'Basket Name',
     },
     {
-      id: "stock Count",
-      accessorKey: "stockCount",
-      header: "Stock Count",
+      id: 'stock Count',
+      accessorKey: 'stockCount',
+      header: 'Stock Count',
       cell: () => {
         // const stockCount = row.getValue("stockCount");
         return <div className="font-medium">0</div>;
       },
     },
     {
-      id: "Invested Value",
-      accessorKey: "investedValue",
-      header: "Invested Value",
+      id: 'Invested Value',
+      accessorKey: 'investedValue',
+      header: 'Invested Value',
       cell: () => {
         // const amount = parseFloat(row.getValue("amount"));
-        const formatted = new Intl.NumberFormat("en-IN", {
-          style: "currency",
-          currency: "INR",
+        const formatted = new Intl.NumberFormat('en-IN', {
+          style: 'currency',
+          currency: 'INR',
         }).format(300.55);
 
         return <div className="font-medium">{formatted}</div>;
       },
     },
     {
-      id: "actions",
+      id: 'actions',
       cell: ({ row }) => {
         return (
           <DropdownMenu>
@@ -103,11 +103,11 @@ const Portfolio = () => {
       // console.log(memoizedSelectedRows, "rows");
       setSelectedRows(rows);
     },
-    [setSelectedRows]
+    [setSelectedRows],
   );
 
   useEffect(() => {
-    console.log(selectedRows, "selectedRows");
+    console.log(selectedRows, 'selectedRows');
   }, [selectedRows]);
   return (
     <div className={` mx-auto w-full p-2 h-full overflow-y-auto  `}>

@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 
-import "./SearchBar.css";
+import './SearchBar.css';
 
 export const SearchBar = ({ setResults }) => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
 
-  const fetchData = (value) => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((json) => {
-        const results = json.filter((user) => {
+  const fetchData = value => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(response => response.json())
+      .then(json => {
+        const results = json.filter(user => {
           return (
             value &&
             user &&
@@ -22,7 +22,7 @@ export const SearchBar = ({ setResults }) => {
       });
   };
 
-  const handleChange = (value) => {
+  const handleChange = value => {
     setInput(value);
     fetchData(value);
   };
@@ -33,7 +33,7 @@ export const SearchBar = ({ setResults }) => {
       <input
         placeholder="Type to search..."
         value={input}
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={e => handleChange(e.target.value)}
       />
     </div>
   );

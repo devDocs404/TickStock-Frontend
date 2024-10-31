@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 interface FeatureCardProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,7 @@ const FeatureCard = ({ icon: Icon, title, description }: FeatureCardProps) => (
     className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-6 flex items-start space-x-4"
   >
     <div className="bg-blue-500 rounded-full p-3">
-      <Icon className="text-white" size={24} />{" "}
+      <Icon className="text-white" size={24} />{' '}
       {/* Passing className and size */}
     </div>
     <div>

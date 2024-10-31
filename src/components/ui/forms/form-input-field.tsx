@@ -1,11 +1,11 @@
-import { Controller, Control, FieldValues, Path } from "react-hook-form";
+import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import {
   FormLabel,
   FormControl,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "../input";
+} from '@/components/ui/form';
+import { Input } from '../input';
 
 interface FormInputProps<T extends FieldValues> {
   name: Path<T>;
@@ -22,8 +22,8 @@ function FormInput<T extends FieldValues>({
   name,
   control,
   label,
-  placeholder = "",
-  type = "text",
+  placeholder = '',
+  type = 'text',
   disabled,
 
   convertToString,
@@ -34,7 +34,7 @@ function FormInput<T extends FieldValues>({
       name={name}
       render={({ field, fieldState }) => (
         <FormItem>
-          <FormLabel className={fieldState.error ? "text-red-600" : ""}>
+          <FormLabel className={fieldState.error ? 'text-red-600' : ''}>
             {label}
           </FormLabel>
           <FormControl>
@@ -45,7 +45,7 @@ function FormInput<T extends FieldValues>({
               disabled={disabled}
               onChange={
                 convertToString
-                  ? (e) => field.onChange(e.target.value.toString())
+                  ? e => field.onChange(e.target.value.toString())
                   : undefined
               }
             />

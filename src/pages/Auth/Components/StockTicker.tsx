@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
 const StockTicker = () => {
   const [tickerWidth, setTickerWidth] = useState(0);
@@ -12,11 +12,11 @@ const StockTicker = () => {
   }, []);
 
   const stocks = [
-    { symbol: "AAPL", price: 150.25, change: 2.5 },
-    { symbol: "GOOGL", price: 2750.8, change: -0.8 },
-    { symbol: "MSFT", price: 305.15, change: 1.2 },
-    { symbol: "AMZN", price: 3380.5, change: 0.5 },
-    { symbol: "FB", price: 325.75, change: -1.5 },
+    { symbol: 'AAPL', price: 150.25, change: 2.5 },
+    { symbol: 'GOOGL', price: 2750.8, change: -0.8 },
+    { symbol: 'MSFT', price: 305.15, change: 1.2 },
+    { symbol: 'AMZN', price: 3380.5, change: 0.5 },
+    { symbol: 'FB', price: 325.75, change: -1.5 },
   ];
 
   return (
@@ -29,9 +29,9 @@ const StockTicker = () => {
           transition: {
             x: {
               repeat: Infinity,
-              repeatType: "loop",
+              repeatType: 'loop',
               duration: 20,
-              ease: "linear",
+              ease: 'linear',
             },
           },
         }}
@@ -42,10 +42,10 @@ const StockTicker = () => {
             <span className="ml-2">${stock.price.toFixed(2)}</span>
             <span
               className={`ml-2 ${
-                stock.change >= 0 ? "text-green-400" : "text-red-400"
+                stock.change >= 0 ? 'text-green-400' : 'text-red-400'
               }`}
             >
-              {stock.change >= 0 ? "+" : ""}
+              {stock.change >= 0 ? '+' : ''}
               {stock.change.toFixed(2)}%
             </span>
           </span>

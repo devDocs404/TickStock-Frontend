@@ -1,6 +1,6 @@
-import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { FormItem, FormLabel, FormControl } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { FormItem, FormLabel, FormControl } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
 
 interface FormFieldComponentProps<T extends FieldValues> {
   control: Control<T>;
@@ -35,14 +35,14 @@ const FormFieldTextArea = <T extends FieldValues>({
             <Textarea
               {...field}
               id={name}
-              onChange={(e) => {
+              onChange={e => {
                 field.onChange(e);
                 if (onChange) {
                   onChange(e);
                 }
               }}
               placeholder={placeholder}
-              className={`bg-white ${className ?? ""}`}
+              className={`bg-white ${className ?? ''}`}
             />
             {fieldState.error && (
               <p className="text-error text-xs">{fieldState.error.message}</p>

@@ -1,12 +1,12 @@
-import { Control, FieldValues, Path } from "react-hook-form";
+import { Control, FieldValues, Path } from 'react-hook-form';
 import {
   FormField,
   FormLabel,
   FormControl,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import CustomSelect from "../custom-select";
+} from '@/components/ui/form';
+import CustomSelect from '../custom-select';
 
 interface OptionType {
   label: string | undefined;
@@ -36,7 +36,7 @@ export default function FormSelectField<T extends FieldValues>({
       name={name}
       render={({ field }) => {
         const selectedOption = options.find(
-          (option) => option.value === field.value
+          option => option.value === field.value,
         );
 
         return (
@@ -46,9 +46,7 @@ export default function FormSelectField<T extends FieldValues>({
               <CustomSelect
                 options={options}
                 value={selectedOption}
-                onChange={(option) =>
-                  field.onChange(option ? option.value : "")
-                }
+                onChange={option => field.onChange(option ? option.value : '')}
                 setSearchTerm={setSearchTerm}
                 placeholder={placeholder}
               />
