@@ -107,57 +107,47 @@ const StocksForm = ({
   const onSubmit = async (data: z.infer<typeof createStockSchema>) => {
     console.log(data, 'data');
     setPending(true);
-    if (editPayload) {
-      // updateBasket({
-      //   data: { basketId: data.basketId },
-      //   params: { id: editPayload.id },
-      //   successTrigger: () => {
-      //     setIsStocksDialogOpen(false);
-      //     reset({ basketId: "" });
-      //   },
-      // });
-    } else {
-      createBasket({
-        data: {
-          tickerId: data.tickerId,
-          basketId: selectedBasketOption.value,
-          buyDate: dayjs(data.buyDate).format('YYYY-MM-DD'),
-          buyPrice: data.buyPrice,
-          quantity: data.quantity,
-          brokerName: data.brokerName,
-          investedAmount: investedAmount,
-          sellDate: null,
-          sellPrice: null,
-          totalReturn: null,
-          totalInvestedDays: null,
-          tradeType: null,
-          notes: data.notes,
-          sellQuantity: null,
-        },
-        successTrigger: () => {
-          setIsStocksDialogOpen(false);
-          reset();
-        },
-      });
-      console.log(
-        {
-          tickerId: data.tickerId,
-          basketId: data.basketId,
-          buyDate: dayjs(buyDate).format('YYYY-MM-DD'),
-          buyPrice: data.buyPrice,
-          quantity: data.quantity,
-          brokerName: data.brokerName,
-          investedAmount: investedAmount,
-          sellDate: data.sellDate
-            ? dayjs(data.sellDate).format('YYYY-MM-DD')
-            : null,
-          sellPrice: data.sellPrice || null,
-          totalReturn: data.totalReturn || null,
-          totalInvestedDays: data.totalInvestedDays || null,
-        },
-        'datadddddd',
-      );
-    }
+
+    createBasket({
+      data: {
+        tickerId: data.tickerId,
+        basketId: selectedBasketOption.value,
+        buyDate: dayjs(data.buyDate).format('YYYY-MM-DD'),
+        buyPrice: data.buyPrice,
+        quantity: data.quantity,
+        brokerName: data.brokerName,
+        investedAmount: investedAmount,
+        sellDate: null,
+        sellPrice: null,
+        totalReturn: null,
+        totalInvestedDays: null,
+        tradeType: null,
+        notes: data.notes,
+        sellQuantity: null,
+      },
+      successTrigger: () => {
+        setIsStocksDialogOpen(false);
+        reset();
+      },
+    });
+    console.log(
+      {
+        tickerId: data.tickerId,
+        basketId: data.basketId,
+        buyDate: dayjs(buyDate).format('YYYY-MM-DD'),
+        buyPrice: data.buyPrice,
+        quantity: data.quantity,
+        brokerName: data.brokerName,
+        investedAmount: investedAmount,
+        sellDate: data.sellDate
+          ? dayjs(data.sellDate).format('YYYY-MM-DD')
+          : null,
+        sellPrice: data.sellPrice || null,
+        totalReturn: data.totalReturn || null,
+        totalInvestedDays: data.totalInvestedDays || null,
+      },
+      'datadddddd',
+    );
     setPending(false);
   };
 

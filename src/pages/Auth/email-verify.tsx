@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Mail, PartyPopper, CheckCircle } from 'lucide-react';
 import { useVerifyEmail } from '@/Queries/AuthQueries';
-import { Toaster } from 'sonner';
 import { useParams } from 'react-router-dom';
 
 const EmailVerifiedCard = () => {
@@ -37,7 +36,6 @@ const EmailVerifiedCard = () => {
 
   return (
     <>
-      <Toaster />
       <div className="flex justify-center items-center h-screen">
         <div className="bg-white rounded-lg shadow-md p-10 w-1/3 md:w-1/2 lg:w-1/3 max-w-2xl h-1/3 min-w-[350px] mx-auto relative overflow-hidden">
           {/* Decorative elements */}

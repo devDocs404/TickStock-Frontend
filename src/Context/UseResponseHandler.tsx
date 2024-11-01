@@ -21,8 +21,8 @@ interface ResponseWithStatus<T> {
 const useResponseHandler = () => {
   const { refreshToken, accessToken } = useAuthStore();
   const navigate = useNavigate();
-  const baseURL = 'https://www.api.tickstock.muzakkir.dev/';
-  // const baseURL = " http://127.0.0.1:8787";
+  // const baseURL = 'https://www.api.tickstock.muzakkir.dev/';
+  const baseURL = " http://127.0.0.1:8787";
 
   const axiosInstance: AxiosInstance = axios.create({
     baseURL,

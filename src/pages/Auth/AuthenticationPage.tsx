@@ -7,7 +7,6 @@ import { AnimatedText } from './Components/AnimatedText';
 import Background from './Components/Background';
 import FeatureCard from './Components/FeatureCard';
 import StockTicker from './Components/StockTicker';
-import { Toaster } from 'sonner';
 import Loading from '@/components/Global/Loading';
 
 const Logo = () => (
@@ -63,7 +62,6 @@ export default function AuthenticationPage({
       {/* <React  style={{width: "1000px", height: "1000px", color: "green"}} /> */}
 
       <div className="flex h-screen">
-        <Toaster richColors />
         <Logo />
         <div
           className={`w-full md:w-1/2 flex items-center justify-center p-12 relative z-10 ${
