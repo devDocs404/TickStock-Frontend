@@ -7,7 +7,7 @@ export const createBasketSchema = z.object({
     .max(50, { message: 'Basket name must be at most 50 characters long' }),
 });
 export const createStockSchema = z.object({
-  basketId: z.string().min(1, { message: 'Basket id must be filled' }),
+  basketId: z.string().optional(),
   tickerId: z.string().min(1, { message: 'Ticker is required' }),
   buyPrice: z.string().min(1, { message: 'Buy price must be filled' }),
   quantity: z.string().min(1, { message: 'Quantity must be filled' }),
@@ -19,5 +19,5 @@ export const createStockSchema = z.object({
   totalInvestedDays: z.string().optional(),
   sellQuantity: z.string().optional(),
   notes: z.string().optional(),
-  buyDate: z.date(),
+  buyDate: z.date().optional(),
 });

@@ -95,7 +95,6 @@ export default function StockPasswordReset() {
 
   return (
     <>
-      <Toaster richColors />
       <div
         className={`min-h-screen flex flex-col items-center justify-center bg-gradient-to-br ${
           toggleTheme === 'dark'

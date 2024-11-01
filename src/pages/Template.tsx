@@ -5,7 +5,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { BarChart2, Wallet, User, LayoutDashboard } from 'lucide-react';
 import { Sidebar } from '../components/SideBar';
 import { useGlobalStore } from '@/Store/GlobalSore';
-import { Toaster } from 'sonner';
 
 const Template = ({
   setIsDark,
@@ -114,7 +113,6 @@ const Template = ({
   }, []);
   return (
     <>
-      <Toaster richColors />
       <div className={`flex h-[100vh] m-w-[100vw] overflow-y-auto `}>
         <Sidebar
           activeItem={activeItem}
