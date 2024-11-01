@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import { AppProviders } from './providers/app-providers';
 import { StrictMode } from 'react';
-import { App } from './app';
+import { App } from './App';
 
 const container = document.getElementById('root');
 
