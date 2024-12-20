@@ -11,7 +11,7 @@ const WorkInProgress = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WorkInProgress;
+export default WorkInProgress

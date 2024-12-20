@@ -1,15 +1,16 @@
-import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { FormItem, FormLabel, FormControl } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Control, Controller, FieldValues, Path } from 'react-hook-form'
+
+import { FormControl, FormItem, FormLabel } from '@/components/ui/form'
+import { Textarea } from '@/components/ui/textarea'
 
 interface FormFieldComponentProps<T extends FieldValues> {
-  control: Control<T>;
-  name: Path<T>;
-  label: string;
-  placeholder?: string;
-  required?: boolean;
-  className?: string;
-  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  control: Control<T>
+  name: Path<T>
+  label: string
+  placeholder?: string
+  required?: boolean
+  className?: string
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 
 const FormFieldTextArea = <T extends FieldValues>({
@@ -35,14 +36,14 @@ const FormFieldTextArea = <T extends FieldValues>({
             <Textarea
               {...field}
               id={name}
-              onChange={(e) => {
-                field.onChange(e);
+              onChange={e => {
+                field.onChange(e)
                 if (onChange) {
-                  onChange(e);
+                  onChange(e)
                 }
               }}
               placeholder={placeholder}
-              className={`bg-white ${className ?? ""}`}
+              className={`bg-white ${className ?? ''}`}
             />
             {fieldState.error && (
               <p className="text-error text-xs">{fieldState.error.message}</p>
@@ -52,6 +53,6 @@ const FormFieldTextArea = <T extends FieldValues>({
       />
     </FormControl>
   </FormItem>
-);
+)
 
-export default FormFieldTextArea;
+export default FormFieldTextArea

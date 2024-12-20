@@ -1,7 +1,8 @@
-import { Check, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Check, ChevronDown } from 'lucide-react'
 
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -9,29 +10,29 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 interface Option {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
 interface SelectProps {
-  label: string;
-  options: Option[];
-  value: string;
-  setValue: (value: string) => void;
-  setSearchText: (value: string) => void;
-  searchText: string;
-  placeholder?: string;
-  isFetching?: boolean;
-  icon?: React.ReactNode;
+  label: string
+  options: Option[]
+  value: string
+  setValue: (value: string) => void
+  setSearchText: (value: string) => void
+  searchText: string
+  placeholder?: string
+  isFetching?: boolean
+  icon?: React.ReactNode
 }
 
 // export function ReactSelect({
@@ -140,25 +141,25 @@ export function ReactSelect({
   setValue,
   setSearchText,
   searchText,
-  placeholder = "Select an option",
+  placeholder = 'Select an option',
   isFetching = false,
   icon,
 }: SelectProps) {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
   const [selectedOption, setSelectedOption] = useState<Option | null>(
-    options.find((option) => option.value === value) || null
-  );
+    options.find(option => option.value === value) || null,
+  )
 
-  const filteredOptions = options.filter((option) =>
-    option?.label?.toLowerCase()?.includes(searchText?.toLowerCase() || "")
-  );
+  const filteredOptions = options.filter(option =>
+    option?.label?.toLowerCase()?.includes(searchText?.toLowerCase() || ''),
+  )
 
   useEffect(() => {
-    const matchedOption = options.find((option) => option.value === value);
+    const matchedOption = options.find(option => option.value === value)
     if (matchedOption) {
-      setSelectedOption(matchedOption);
+      setSelectedOption(matchedOption)
     }
-  }, [value, options]);
+  }, [value, options])
 
   return (
     <div className="space-y-2">
@@ -174,9 +175,9 @@ export function ReactSelect({
             {icon && icon}
             <span
               className={cn(
-                "truncate",
-                !value && "text-muted-foreground relative",
-                icon ? "pl-8" : "pl-2"
+                'truncate',
+                !value && 'text-muted-foreground relative',
+                icon ? 'pl-8' : 'pl-2',
               )}
             >
               {selectedOption?.label || placeholder}
@@ -207,18 +208,18 @@ export function ReactSelect({
                 <CommandEmpty>No options found.</CommandEmpty>
               ) : null}
               <CommandGroup>
-                {filteredOptions.map((option) => (
+                {filteredOptions.map(option => (
                   <CommandItem
                     key={option.value}
                     value={option.value}
-                    onSelect={(currentValue) => {
+                    onSelect={currentValue => {
                       const selected = options.find(
-                        (opt) => opt.value === currentValue
-                      );
-                      setValue(currentValue === value ? "" : currentValue);
-                      setSelectedOption(selected || null); // Persist selected option
-                      setOpen(false);
-                      setSearchText(""); // Clear search text on selection
+                        opt => opt.value === currentValue,
+                      )
+                      setValue(currentValue === value ? '' : currentValue)
+                      setSelectedOption(selected || null) // Persist selected option
+                      setOpen(false)
+                      setSearchText('') // Clear search text on selection
                     }}
                   >
                     {option.label}
@@ -233,5 +234,5 @@ export function ReactSelect({
         </PopoverContent>
       </Popover>
     </div>
-  );
+  )
 }

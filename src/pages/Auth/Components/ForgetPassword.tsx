@@ -1,4 +1,10 @@
-import { Button } from "@/components/ui/button";
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { useState } from 'react'
+
+import { useForgetPasswordPost } from '@/Queries/AuthQueries'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -7,48 +13,44 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useForgetPasswordPost } from "@/Queries/AuthQueries";
-import { useState } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const schema = z.object({
   email: z
     .string()
-    .email({ message: "Invalid email address.Please try again." }),
-});
+    .email({ message: 'Invalid email address.Please try again.' }),
+})
 
 export function ForgetPassword() {
-  const { mutate } = useForgetPasswordPost();
+  const { mutate } = useForgetPasswordPost()
   const [data, setData] = useState({
-    email: "",
-  });
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+    email: '',
+  })
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, [e.target.id]: e.target.value });
-  };
+    setData({ ...data, [e.target.id]: e.target.value })
+  }
 
   const successTrigger = () => {
-    setData({ email: "" });
-    setIsDialogOpen(false);
-  };
+    setData({ email: '' })
+    setIsDialogOpen(false)
+  }
 
   const handleSubmitForgetPassword = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     const result = schema.safeParse({
       email: data.email,
-    });
+    })
 
     if (!result.success) {
-      toast.error(result.error.errors.map((error) => error.message).join(", "));
+      toast.error(result.error.errors.map(error => error.message).join(', '))
     } else {
-      mutate({ data: { email: data.email }, successTrigger });
+      mutate({ data: { email: data.email }, successTrigger })
     }
-  };
+  }
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -94,5 +96,5 @@ export function ForgetPassword() {
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

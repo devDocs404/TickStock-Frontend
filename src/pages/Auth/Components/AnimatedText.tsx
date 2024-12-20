@@ -1,9 +1,10 @@
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { motion } from 'framer-motion'
+
+import { ReactNode } from 'react'
 
 interface AnimatedTextProps {
-  children: ReactNode;
-  delay?: number;
+  children: ReactNode
+  delay?: number
 }
 
 const AnimatedText = ({ children, delay = 0 }: AnimatedTextProps) => (
@@ -14,6 +15,6 @@ const AnimatedText = ({ children, delay = 0 }: AnimatedTextProps) => (
   >
     {children}
   </motion.div>
-);
+)
 
-export { AnimatedText };
+export { AnimatedText }

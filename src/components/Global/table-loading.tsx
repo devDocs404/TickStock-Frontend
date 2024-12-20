@@ -9,7 +9,7 @@ const TableLoading = () => {
         <div className="w-[15px] h-[4px] bg-lime-500 rounded-sm mx-1 animate-pulse delay-600"></div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TableLoading;
+export default TableLoading

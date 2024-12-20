@@ -1,44 +1,46 @@
-import { Search } from "lucide-react";
-import React, { useEffect, useState, useMemo } from "react";
-import { Input } from "../ui/input";
-import debounce from "lodash.debounce";
+import debounce from 'lodash.debounce'
+import { Search } from 'lucide-react'
+
+import React, { useEffect, useMemo, useState } from 'react'
+
+import { Input } from '../ui/input'
 
 export const SearchInput = ({
   search,
   setSearchTerm,
 }: {
-  search: string;
-  setSearchTerm: (searchTerm: string) => void;
+  search: string
+  setSearchTerm: (searchTerm: string) => void
 }) => {
-  const [localSearchTerm, setLocalSearchTerm] = useState(search);
+  const [localSearchTerm, setLocalSearchTerm] = useState(search)
 
   // Create a memoized debounced function
   const debouncedSetSearch = useMemo(
     () =>
       debounce((value: string) => {
-        setSearchTerm(value);
+        setSearchTerm(value)
       }, 500),
-    [setSearchTerm]
-  );
+    [setSearchTerm],
+  )
 
   // Handle input change
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setLocalSearchTerm(value);
-    debouncedSetSearch(value);
-  };
+    const value = e.target.value
+    setLocalSearchTerm(value)
+    debouncedSetSearch(value)
+  }
 
   // Cleanup debounce on unmount
   useEffect(() => {
     return () => {
-      debouncedSetSearch.cancel();
-    };
-  }, [debouncedSetSearch]);
+      debouncedSetSearch.cancel()
+    }
+  }, [debouncedSetSearch])
 
   // Sync local state with prop
   useEffect(() => {
-    setLocalSearchTerm(search);
-  }, [search]);
+    setLocalSearchTerm(search)
+  }, [search])
 
   return (
     <div className="relative">
@@ -51,5 +53,5 @@ export const SearchInput = ({
         className="pr-10 w-full"
       />
     </div>
-  );
-};
+  )
+}

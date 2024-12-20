@@ -4,10 +4,11 @@ import {
   IndianRupee,
   PieChartIcon,
   Wallet,
-} from "lucide-react";
-import { MetricCard } from "./Components/MetricCard";
-import { PortfolioGraph } from "./Components/PortfolioGraph";
-import { OverviewSection } from "./Components/OverviewCard";
+} from 'lucide-react'
+
+import { MetricCard } from './Components/MetricCard'
+import { OverviewSection } from './Components/OverviewCard'
+import { PortfolioGraph } from './Components/PortfolioGraph'
 
 const Dashboard = ({ isDark }: { isDark: boolean }) => {
   // useEffect(() => {
@@ -23,7 +24,7 @@ const Dashboard = ({ isDark }: { isDark: boolean }) => {
           title="Total Assets"
           value={
             <>
-              <span style={{ display: "flex" }}>
+              <span style={{ display: 'flex' }}>
                 <IndianRupee />
                 <span>1.2M</span>
               </span>
@@ -78,7 +79,7 @@ const Dashboard = ({ isDark }: { isDark: boolean }) => {
       <div className="flex justify-between h-[400px] p-4">
         <div
           className={`p-6 w-[65%] h-full rounded-lg ${
-            isDark ? "bg-[#212121]" : "bg-[#F4F5FB]"
+            isDark ? 'bg-[#212121]' : 'bg-[#F4F5FB]'
           }`}
         >
           <h1 className="text-4xl font-medium">Portfolio Graph</h1>
@@ -91,7 +92,7 @@ const Dashboard = ({ isDark }: { isDark: boolean }) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

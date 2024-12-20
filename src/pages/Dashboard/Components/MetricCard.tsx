@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion'
 
 const MetricCard = ({
   title,
@@ -7,15 +7,15 @@ const MetricCard = ({
   icon: Icon,
   isDark,
 }: {
-  title: string;
-  value: React.ReactNode;
-  color: string;
-  icon: React.ElementType;
-  isDark: boolean;
+  title: string
+  value: React.ReactNode
+  color: string
+  icon: React.ElementType
+  isDark: boolean
 }) => (
   <motion.div
     className={`p-4  rounded-lg shadow-sm ${
-      isDark ? "bg-[#212121]" : "bg-[#F4F5FB]"
+      isDark ? 'bg-[#212121]' : 'bg-[#F4F5FB]'
     }
     `}
     initial={{ opacity: 0, y: 20 }}
@@ -36,12 +36,12 @@ const MetricCard = ({
         transition={{
           delay: 0.3,
           duration: 0.3,
-          type: "spring",
+          type: 'spring',
           stiffness: 500,
           damping: 15,
         }}
         className={`text-sm font-semibold ${
-          isDark ? "text-gray-300" : "text-gray-600"
+          isDark ? 'text-gray-300' : 'text-gray-600'
         }`}
       >
         {title}
@@ -52,7 +52,7 @@ const MetricCard = ({
         transition={{
           delay: 0.3,
           duration: 0.3,
-          type: "spring",
+          type: 'spring',
           stiffness: 500,
           damping: 15,
         }}
@@ -66,15 +66,15 @@ const MetricCard = ({
       transition={{
         delay: 0.3,
         duration: 0.3,
-        type: "spring",
+        type: 'spring',
         stiffness: 500,
         damping: 15,
       }}
-      className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+      className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}
     >
       {value}
     </motion.p>
   </motion.div>
-);
+)
 
-export { MetricCard };
+export { MetricCard }

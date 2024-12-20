@@ -1,7 +1,7 @@
-import { useGlobalStore } from "../../../Store/GlobalSore";
+import { useGlobalStore } from '../../../Store/GlobalSore'
 
 const Background = () => {
-  const { toggleTheme } = useGlobalStore();
+  const { toggleTheme } = useGlobalStore()
   return (
     <div className="absolute inset-0 z-0 opacity-90">
       <svg
@@ -15,9 +15,9 @@ const Background = () => {
               offset="0%"
               style={{
                 stopColor:
-                  toggleTheme === "dark"
-                    ? "rgb(30,58,138, 0.1)"
-                    : "rgb(30,58,138)",
+                  toggleTheme === 'dark'
+                    ? 'rgb(30,58,138, 0.1)'
+                    : 'rgb(30,58,138)',
                 stopOpacity: 1,
               }}
             />
@@ -25,9 +25,9 @@ const Background = () => {
               offset="100%"
               style={{
                 stopColor:
-                  toggleTheme === "dark"
-                    ? "rgb(30,64,175, 0.1)"
-                    : "rgb(30,64,175)",
+                  toggleTheme === 'dark'
+                    ? 'rgb(30,64,175, 0.1)'
+                    : 'rgb(30,64,175)',
                 stopOpacity: 1,
               }}
             />
@@ -44,7 +44,7 @@ const Background = () => {
         />
       </svg>
     </div>
-  );
-};
+  )
+}
 
-export default Background;
+export default Background

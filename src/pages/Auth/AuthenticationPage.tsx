@@ -1,14 +1,17 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, DollarSign, BarChart2 } from "lucide-react";
-import SignupForm from "./Components/Signup";
-import LoginForm from "./Components/LoginForm";
-import { AnimatedText } from "./Components/AnimatedText";
-import Background from "./Components/Background";
-import FeatureCard from "./Components/FeatureCard";
-import StockTicker from "./Components/StockTicker";
-import { Toaster } from "sonner";
-import Loading from "@/components/Global/Loading";
+import { AnimatePresence, motion } from 'framer-motion'
+import { BarChart2, DollarSign, TrendingUp } from 'lucide-react'
+import { Toaster } from 'sonner'
+
+import { useState } from 'react'
+
+import Loading from '@/components/Global/Loading'
+
+import { AnimatedText } from './Components/AnimatedText'
+import Background from './Components/Background'
+import FeatureCard from './Components/FeatureCard'
+import LoginForm from './Components/LoginForm'
+import SignupForm from './Components/Signup'
+import StockTicker from './Components/StockTicker'
 
 const Logo = () => (
   <motion.div
@@ -20,41 +23,41 @@ const Logo = () => (
     <span className="text-blue-600">Stock</span>
     <span>Folio</span>
   </motion.div>
-);
+)
 
 export default function AuthenticationPage({
   setIsDark,
   isDark,
 }: {
-  setIsDark: (value: boolean) => void;
-  isDark: boolean;
+  setIsDark: (value: boolean) => void
+  isDark: boolean
 }) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [loadingState, setLoadingState] = useState(false);
+  const [isLogin, setIsLogin] = useState(true)
+  const [loadingState, setLoadingState] = useState(false)
 
   const toggleForm = () => {
-    setIsLogin((prevIsLogin) => !prevIsLogin);
-  };
+    setIsLogin(prevIsLogin => !prevIsLogin)
+  }
   const featureCardsData = [
     {
       icon: TrendingUp,
-      title: "Track Performance",
+      title: 'Track Performance',
       description:
-        "Monitor your investments in real-time with advanced charting tools.",
+        'Monitor your investments in real-time with advanced charting tools.',
     },
     {
       icon: DollarSign,
-      title: "Manage Portfolios",
+      title: 'Manage Portfolios',
       description:
-        "Create and manage multiple portfolios to diversify your investments.",
+        'Create and manage multiple portfolios to diversify your investments.',
     },
     {
       icon: BarChart2,
-      title: "Analyze Trends",
+      title: 'Analyze Trends',
       description:
-        "Get insights on market trends and make informed investment decisions.",
+        'Get insights on market trends and make informed investment decisions.',
     },
-  ];
+  ]
 
   return (
     <>
@@ -67,12 +70,12 @@ export default function AuthenticationPage({
         <Logo />
         <div
           className={`w-full md:w-1/2 flex items-center justify-center p-12 relative z-10 ${
-            isLogin && "flex justify-center items-center"
+            isLogin && 'flex justify-center items-center'
           }`}
         >
           <div
             className={`w-full h-[774px] max-w-md ${
-              isLogin && "flex justify-center items-center w-full"
+              isLogin && 'flex justify-center items-center w-full'
             }`}
           >
             <AnimatePresence mode="wait">
@@ -144,5 +147,5 @@ export default function AuthenticationPage({
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -3,12 +3,12 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip'
 
 interface CustomTooltipProps {
-  toolContent: string | React.ReactNode;
-  toolTrigger: JSX.Element;
-  toolDuration?: number;
+  toolContent: string | React.ReactNode
+  toolTrigger: JSX.Element
+  toolDuration?: number
 }
 
 export default function CustomTooltip({
@@ -27,5 +27,5 @@ export default function CustomTooltip({
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

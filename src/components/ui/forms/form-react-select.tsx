@@ -1,29 +1,31 @@
-import { Control, FieldValues, Path } from "react-hook-form";
+import { Control, FieldValues, Path } from 'react-hook-form'
+
 import {
-  FormField,
-  FormLabel,
   FormControl,
+  FormField,
   FormItem,
+  FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { ReactSelect } from "../react-select";
+} from '@/components/ui/form'
+
+import { ReactSelect } from '../react-select'
 
 interface Option {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 interface FormReactSelectProps<T extends FieldValues> {
-  control: Control<T>;
-  name: Path<T>;
-  label: string;
-  options: Option[];
-  placeholder?: string;
-  setSearchTerm: (value: string) => void;
-  searchText: string;
-  required?: boolean;
-  isFetching?: boolean;
-  icon?: React.ReactNode;
+  control: Control<T>
+  name: Path<T>
+  label: string
+  options: Option[]
+  placeholder?: string
+  setSearchTerm: (value: string) => void
+  searchText: string
+  required?: boolean
+  isFetching?: boolean
+  icon?: React.ReactNode
 }
 
 export function FormReactSelect<T extends FieldValues>({
@@ -31,7 +33,7 @@ export function FormReactSelect<T extends FieldValues>({
   name,
   label,
   options,
-  placeholder = "Select an option",
+  placeholder = 'Select an option',
   setSearchTerm,
   searchText,
   required = false,
@@ -44,7 +46,7 @@ export function FormReactSelect<T extends FieldValues>({
       name={name}
       render={({ field, fieldState }) => (
         <FormItem>
-          <FormLabel className={fieldState.error ? "text-red-600" : ""}>
+          <FormLabel className={fieldState.error ? 'text-red-600' : ''}>
             {label}
             {required && <span className="text-red-600">*</span>}
           </FormLabel>
@@ -65,5 +67,5 @@ export function FormReactSelect<T extends FieldValues>({
         </FormItem>
       )}
     />
-  );
+  )
 }

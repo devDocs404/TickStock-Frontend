@@ -1,32 +1,34 @@
-import { useAuthStore } from "@/Store/AuthStore";
-import { ReactNode, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+
+import { ReactNode, useEffect } from 'react'
+
+import { useAuthStore } from '@/Store/AuthStore'
 
 interface ProtectedRoutesProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const ProtectedRoutes = ({
   children,
 }: ProtectedRoutesProps): JSX.Element | null => {
-  const navigate = useNavigate();
-  const { accessToken } = useAuthStore();
+  const navigate = useNavigate()
+  const { accessToken } = useAuthStore()
   useEffect(() => {
-    if (accessToken === "" || !accessToken) {
-      navigate("/login", { replace: true });
-      toast.warning("Session expired.");
+    if (accessToken === '' || !accessToken) {
+      navigate('/login', { replace: true })
+      toast.warning('Session expired.')
     }
-  }, [accessToken, navigate, children]);
+  }, [accessToken, navigate, children])
 
-  if (accessToken === "") {
-    return null;
+  if (accessToken === '') {
+    return null
   }
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
-export default ProtectedRoutes;
+export default ProtectedRoutes
 
 // import { useAuthStore } from "@/Store/AuthStore";
 // import { ReactNode, useEffect } from "react";

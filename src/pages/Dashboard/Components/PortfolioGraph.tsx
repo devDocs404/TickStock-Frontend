@@ -1,27 +1,27 @@
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
   CartesianGrid,
-  Tooltip,
+  Line,
+  LineChart,
   ResponsiveContainer,
   // Legend,
-} from "recharts";
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 
 const data = [
-  { name: "Jan", value: 4000 },
-  { name: "Feb", value: 3000 },
-  { name: "Mar", value: 5000 },
-  { name: "Apr", value: 2780 },
-  { name: "May", value: 1890 },
-  { name: "Jun", value: 2390 },
-];
+  { name: 'Jan', value: 4000 },
+  { name: 'Feb', value: 3000 },
+  { name: 'Mar', value: 5000 },
+  { name: 'Apr', value: 2780 },
+  { name: 'May', value: 1890 },
+  { name: 'Jun', value: 2390 },
+]
 const PortfolioGraph = ({
   isDark,
 }: // data,
 {
-  isDark: boolean;
+  isDark: boolean
   // data: [{ name: string; value: number }];
 }) => (
   <>
@@ -30,20 +30,20 @@ const PortfolioGraph = ({
       <LineChart data={data}>
         <CartesianGrid
           strokeDasharray="3 3"
-          stroke={isDark ? "#444" : "#e0e0e0"}
+          stroke={isDark ? '#444' : '#e0e0e0'}
         />
-        <XAxis dataKey="name" stroke={isDark ? "#ccc" : "#555"} />
-        <YAxis stroke={isDark ? "#ccc" : "#555"} />
+        <XAxis dataKey="name" stroke={isDark ? '#ccc' : '#555'} />
+        <YAxis stroke={isDark ? '#ccc' : '#555'} />
         <Tooltip />
         <Line
           type="monotone"
           dataKey="value"
-          stroke={isDark ? "#00C49F" : "#0088FE"}
+          stroke={isDark ? '#00C49F' : '#0088FE'}
         />
       </LineChart>
     </ResponsiveContainer>
     {/* </div> */}
   </>
-);
+)
 
-export { PortfolioGraph };
+export { PortfolioGraph }

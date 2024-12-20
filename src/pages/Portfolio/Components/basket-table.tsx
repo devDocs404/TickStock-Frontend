@@ -1,3 +1,7 @@
+import { AnimatePresence, motion } from 'framer-motion'
+import { Edit, Trash2 } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -5,19 +9,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+} from '@/components/ui/table'
 
 interface Basket {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 interface Stock {
-  id: string;
-  name: string;
-  basketId: string;
+  id: string
+  name: string
+  basketId: string
 }
 
 const BasketTable = ({
@@ -26,10 +27,10 @@ const BasketTable = ({
   handleEditBasket,
   handleDeleteBasket,
 }: {
-  baskets: Basket[];
-  stocks: Stock[];
-  handleEditBasket: (basket: Basket) => void;
-  handleDeleteBasket: (id: string) => void;
+  baskets: Basket[]
+  stocks: Stock[]
+  handleEditBasket: (basket: Basket) => void
+  handleDeleteBasket: (id: string) => void
 }) => (
   <Table>
     <TableHeader>
@@ -41,7 +42,7 @@ const BasketTable = ({
     </TableHeader>
     <TableBody>
       <AnimatePresence>
-        {baskets.map((basket) => (
+        {baskets.map(basket => (
           <motion.tr
             key={basket.id}
             initial={{ opacity: 0 }}
@@ -51,7 +52,7 @@ const BasketTable = ({
           >
             <TableCell>{basket.name}</TableCell>
             <TableCell>
-              {stocks.filter((stock) => stock.basketId === basket.id).length}
+              {stocks.filter(stock => stock.basketId === basket.id).length}
             </TableCell>
             <TableCell>
               <div className="flex space-x-2">
@@ -86,6 +87,6 @@ const BasketTable = ({
       </AnimatePresence>
     </TableBody>
   </Table>
-);
+)
 
-export default BasketTable;
+export default BasketTable

@@ -1,31 +1,33 @@
-import { Controller, Control, FieldValues, Path } from "react-hook-form";
+import { Control, Controller, FieldValues, Path } from 'react-hook-form'
+
 import {
-  FormLabel,
   FormControl,
   FormItem,
+  FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "../input";
+} from '@/components/ui/form'
+
+import { Input } from '../input'
 
 interface FormInputProps<T extends FieldValues> {
-  name: Path<T>;
-  control: Control<T>;
-  label: string;
-  placeholder?: string;
-  type?: string;
-  disabled?: boolean;
-  onChange?: () => void;
-  convertToString?: boolean;
-  required?: boolean;
-  icon?: React.ReactNode;
+  name: Path<T>
+  control: Control<T>
+  label: string
+  placeholder?: string
+  type?: string
+  disabled?: boolean
+  onChange?: () => void
+  convertToString?: boolean
+  required?: boolean
+  icon?: React.ReactNode
 }
 
 function FormInput<T extends FieldValues>({
   name,
   control,
   label,
-  placeholder = "",
-  type = "text",
+  placeholder = '',
+  type = 'text',
   disabled,
   convertToString,
   required = false,
@@ -37,7 +39,7 @@ function FormInput<T extends FieldValues>({
       name={name}
       render={({ field, fieldState }) => (
         <FormItem>
-          <FormLabel className={fieldState.error ? "text-red-600" : ""}>
+          <FormLabel className={fieldState.error ? 'text-red-600' : ''}>
             {label}
             {required && <span className="text-red-600">*</span>}
           </FormLabel>
@@ -47,12 +49,12 @@ function FormInput<T extends FieldValues>({
               <Input
                 {...field}
                 placeholder={placeholder}
-                className={icon ? "pl-8" : "pl-2"}
+                className={icon ? 'pl-8' : 'pl-2'}
                 type={type}
                 disabled={disabled}
                 onChange={
                   convertToString
-                    ? (e) => field.onChange(e.target.value.toString())
+                    ? e => field.onChange(e.target.value.toString())
                     : undefined
                 }
               />
@@ -64,7 +66,7 @@ function FormInput<T extends FieldValues>({
         </FormItem>
       )}
     />
-  );
+  )
 }
 
-export default FormInput;
+export default FormInput

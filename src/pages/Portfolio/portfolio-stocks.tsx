@@ -1,10 +1,20 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Eye, FilePenLine, MoreHorizontal, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import BasketForm from "./Components/basket-form";
-import { DataTable } from "@/components/Global/data-table";
+import { motion } from 'framer-motion'
+import { Eye, FilePenLine, MoreHorizontal, Plus, Trash2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+import { useEffect, useState } from 'react'
+
+import {
+  useFetchBasketsData,
+  useFetchStockBasketsData,
+} from '@/Queries/portfolio-queries'
+import { usePortfolioStore } from '@/Store/PortfolioStore'
+import TableLoading from '@/components/Global/Table-Loading'
+import CustomTooltip from '@/components/Global/custom-tooltip'
+import { DataTable } from '@/components/Global/data-table'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomSelect from '@/components/ui/custom-select'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,80 +22,73 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  useFetchBasketsData,
-  useFetchStockBasketsData,
-} from "@/Queries/portfolio-queries";
+} from '@/components/ui/dropdown-menu'
+import { formatCurrency, formatDate } from '@/lib/utils'
+
+import BasketForm from './Components/basket-form'
+import StocksForm from './Components/stocks-form'
 import {
   CustomColumnDef,
   StockBasketDetailsType,
-} from "./portfolio-utils/types";
-import CustomSelect from "@/components/ui/custom-select";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { usePortfolioStore } from "@/Store/PortfolioStore";
-import StocksForm from "./Components/stocks-form";
-import { useNavigate } from "react-router-dom";
-import TableLoading from "@/components/Global/Table-Loading";
-import CustomTooltip from "@/components/Global/custom-tooltip";
+} from './portfolio-utils/types'
 
 const PortfolioStocks = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchStocksTerm, setSearchStocksTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState("1");
-  const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false);
-  const [isStocksDialogOpen, setIsStocksDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchStocksTerm, setSearchStocksTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState('1')
+  const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false)
+  const [isStocksDialogOpen, setIsStocksDialogOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState<
     | {
-        label: string | undefined;
-        value: string | undefined;
+        label: string | undefined
+        value: string | undefined
       }
     | undefined
-  >(undefined);
+  >(undefined)
 
   const {
     data: basketsData,
     isFetching,
     isPlaceholderData,
-  } = useFetchBasketsData(searchTerm, currentPage.toString(), "10");
+  } = useFetchBasketsData(searchTerm, currentPage.toString(), '10')
 
   const { data: stocksBasketData } = useFetchStockBasketsData(
-    "",
+    '',
     currentPage.toString(),
-    "10",
-    selectedOption?.value
-  );
-  const navigate = useNavigate();
+    '10',
+    selectedOption?.value,
+  )
+  const navigate = useNavigate()
 
   const columns: CustomColumnDef<StockBasketDetailsType>[] = [
     {
-      id: "Ticker",
-      accessorKey: "tickerId",
-      header: "Ticker",
-      meta: { width: "10%" },
+      id: 'Ticker',
+      accessorKey: 'tickerId',
+      header: 'Ticker',
+      meta: { width: '10%' },
       cell: ({ row }) => <div>{row.original?.tickerDetails?.symbolId}</div>,
     },
     {
-      id: "Company",
-      accessorKey: "longName",
-      header: "Company",
-      meta: { width: "20%" },
+      id: 'Company',
+      accessorKey: 'longName',
+      header: 'Company',
+      meta: { width: '20%' },
       cell: ({ row }) => <div>{row.original?.tickerDetails?.longName}</div>,
     },
     {
-      id: "targetAllocation",
-      accessorKey: "targetAllocation",
-      header: "Total Allocation",
-      meta: { width: "15%" },
+      id: 'targetAllocation',
+      accessorKey: 'targetAllocation',
+      header: 'Total Allocation',
+      meta: { width: '15%' },
       cell: ({ row }) => (
         <div>{formatCurrency(row.original?.targetAllocation)}</div>
       ),
     },
     {
-      id: "notes",
-      accessorKey: "notes",
-      header: "Notes",
-      meta: { width: "30%" },
+      id: 'notes',
+      accessorKey: 'notes',
+      header: 'Notes',
+      meta: { width: '30%' },
       cell: ({ row }) => (
         <>
           <CustomTooltip
@@ -96,16 +99,16 @@ const PortfolioStocks = () => {
       ),
     },
     {
-      id: "lastUpdated",
-      accessorKey: "updatedAt",
-      header: "Last Updated",
-      meta: { width: "15%" },
+      id: 'lastUpdated',
+      accessorKey: 'updatedAt',
+      header: 'Last Updated',
+      meta: { width: '15%' },
       cell: ({ row }) => <div>{formatDate(row.original?.updatedAt)}</div>,
     },
     {
-      id: "actions",
-      header: "Actions",
-      meta: { width: "10%" },
+      id: 'actions',
+      header: 'Actions',
+      meta: { width: '10%' },
       cell: ({ row }) => (
         <div className="flex gap-4 justify-start items-center">
           <CustomTooltip
@@ -116,7 +119,7 @@ const PortfolioStocks = () => {
                 className="h-8 w-8 p-0"
                 onClick={() =>
                   navigate(
-                    `/portfolio/stocks/${row.original?.tickerDetails?.symbolId}`
+                    `/portfolio/stocks/${row.original?.tickerDetails?.symbolId}`,
                   )
                 }
               >
@@ -146,31 +149,29 @@ const PortfolioStocks = () => {
         </div>
       ),
     },
-  ];
+  ]
 
-  const [options, setOptions] = useState<{ label: string; value: string }[]>(
-    []
-  );
-  const { selectedBasketOption, setField } = usePortfolioStore();
+  const [options, setOptions] = useState<{ label: string; value: string }[]>([])
+  const { selectedBasketOption, setField } = usePortfolioStore()
   useEffect(() => {
     if (basketsData) {
-      const result = basketsData.data.map((item) => ({
+      const result = basketsData.data.map(item => ({
         label: item.name,
         value: item.id,
-      }));
-      console.log(result, basketsData, "result");
-      setOptions(result);
+      }))
+      console.log(result, basketsData, 'result')
+      setOptions(result)
       const checkIfIdExists = result.find(
-        (item) => item?.value === selectedBasketOption?.value
-      );
-      if (checkIfIdExists === undefined && selectedBasketOption?.value === "") {
-        setField("selectedBasketOption", result[0]);
+        item => item?.value === selectedBasketOption?.value,
+      )
+      if (checkIfIdExists === undefined && selectedBasketOption?.value === '') {
+        setField('selectedBasketOption', result[0])
       }
     }
-  }, [basketsData, selectedBasketOption, setField]);
+  }, [basketsData, selectedBasketOption, setField])
   useEffect(() => {
-    setSelectedOption(selectedBasketOption);
-  }, [selectedBasketOption]);
+    setSelectedOption(selectedBasketOption)
+  }, [selectedBasketOption])
 
   return (
     <div className="mx-auto w-full p-2 h-full overflow-y-auto">
@@ -218,12 +219,12 @@ const PortfolioStocks = () => {
             <CustomSelect
               options={options}
               value={selectedOption}
-              onChange={(value) => {
-                setSelectedOption(value);
+              onChange={value => {
+                setSelectedOption(value)
                 setField(
-                  "selectedBasketOption",
-                  value as { label: string; value: string }
-                );
+                  'selectedBasketOption',
+                  value as { label: string; value: string },
+                )
               }}
               label="Basket"
               placeholder="Select a basket"
@@ -268,7 +269,7 @@ const PortfolioStocks = () => {
         setIsStocksDialogOpen={setIsStocksDialogOpen}
       />
     </div>
-  );
-};
+  )
+}
 
-export default PortfolioStocks;
+export default PortfolioStocks

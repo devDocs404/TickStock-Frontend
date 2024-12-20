@@ -1,9 +1,20 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createBasketSchema } from "@/schema";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+import { useEffect, useState } from 'react'
+
+import {
+  useCreateBasketPost,
+  useUpdateBasketPatch,
+} from '@/Queries/portfolio-queries'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -11,66 +22,58 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { useEffect, useState } from "react";
-import { BasketType } from "../portfolio-utils/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  useCreateBasketPost,
-  useUpdateBasketPatch,
-} from "@/Queries/portfolio-queries";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { createBasketSchema } from '@/schema'
+
+import { BasketType } from '../portfolio-utils/types'
 
 const BasketForm = ({
   editPayload,
   isBasketDialogOpen,
   setIsBasketDialogOpen,
 }: {
-  editPayload?: BasketType;
-  isBasketDialogOpen: boolean;
-  setIsBasketDialogOpen: (value: boolean) => void;
+  editPayload?: BasketType
+  isBasketDialogOpen: boolean
+  setIsBasketDialogOpen: (value: boolean) => void
 }) => {
-  const [pending, setPending] = useState(false);
-  const { mutate: createBasket } = useCreateBasketPost();
-  const { mutate: updateBasket } = useUpdateBasketPatch();
+  const [pending, setPending] = useState(false)
+  const { mutate: createBasket } = useCreateBasketPost()
+  const { mutate: updateBasket } = useUpdateBasketPatch()
   const form = useForm({
     resolver: zodResolver(createBasketSchema),
     defaultValues: {
-      name: editPayload?.name || "",
+      name: editPayload?.name || '',
     },
-  });
-  const { handleSubmit, reset, setValue } = form;
+  })
+  const { handleSubmit, reset, setValue } = form
   // const name = watch("name");
   useEffect(() => {
     if (editPayload) {
-      setValue("name", editPayload.name);
+      setValue('name', editPayload.name)
     }
-  }, [editPayload, setValue]);
+  }, [editPayload, setValue])
 
   const onSubmit = async (data: z.infer<typeof createBasketSchema>) => {
-    setPending(true);
+    setPending(true)
     if (editPayload) {
-      console.log("edit payload", editPayload);
+      console.log('edit payload', editPayload)
       updateBasket({
         data: {
           name: data.name,
           description: null,
-          type: "custom",
+          type: 'custom',
           strategy: null,
           riskLevel: null,
         },
         params: { id: editPayload.id },
         successTrigger: () => {
-          setIsBasketDialogOpen(false);
-          reset({ name: "" });
+          setIsBasketDialogOpen(false)
+          reset({ name: '' })
         },
-      });
+      })
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000))
       createBasket({
         data: {
           name: data.name,
@@ -80,15 +83,15 @@ const BasketForm = ({
           riskLevel: null,
         },
         successTrigger: () => {
-          setIsBasketDialogOpen(false);
-          reset({ name: "" });
+          setIsBasketDialogOpen(false)
+          reset({ name: '' })
         },
-      });
-      console.log("create");
+      })
+      console.log('create')
     }
-    console.log(data);
-    setPending(false);
-  };
+    console.log(data)
+    setPending(false)
+  }
 
   return (
     <Dialog
@@ -104,7 +107,7 @@ const BasketForm = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            {editPayload ? "Edit Basket" : "Create Basket"}
+            {editPayload ? 'Edit Basket' : 'Create Basket'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -130,18 +133,18 @@ const BasketForm = ({
               >
                 {editPayload
                   ? pending
-                    ? "Updating..."
-                    : "Update"
+                    ? 'Updating...'
+                    : 'Update'
                   : pending
-                  ? "Creating..."
-                  : "Create Basket"}
+                    ? 'Creating...'
+                    : 'Create Basket'}
               </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default BasketForm;
+export default BasketForm

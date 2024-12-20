@@ -1,107 +1,110 @@
-import { useEffect, useState } from "react";
-import { CheckCircle2, Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CheckCircle2, Eye, EyeOff } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Toaster, toast } from 'sonner'
+import { z } from 'zod'
+
+import { useEffect, useState } from 'react'
+
+import { useResetPasswordPatch } from '@/Queries/AuthQueries'
+import { useAuthStore } from '@/Store/AuthStore'
+import { useGlobalStore } from '@/Store/GlobalSore'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useGlobalStore } from "@/Store/GlobalSore";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAuthStore } from "@/Store/AuthStore";
-import { useResetPasswordPatch } from "@/Queries/AuthQueries";
-import { z } from "zod";
-import { toast, Toaster } from "sonner";
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
 export default function StockPasswordReset() {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const { id } = useParams();
+  const [isSuccess, setIsSuccess] = useState(false)
+  const { id } = useParams()
   const [data, setData] = useState({
-    password: "",
-    confirmPassword: "",
-  });
+    password: '',
+    confirmPassword: '',
+  })
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
-  });
-  const navigate = useNavigate();
-  const { toggleTheme } = useGlobalStore();
-  const { setField } = useAuthStore();
-  const { mutate: resetPassword } = useResetPasswordPatch();
+  })
+  const navigate = useNavigate()
+  const { toggleTheme } = useGlobalStore()
+  const { setField } = useAuthStore()
+  const { mutate: resetPassword } = useResetPasswordPatch()
 
   const passwordRegex =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
 
   const payloadSchema = z
     .object({
       password: z
         .string()
-        .min(8, { message: "Password must be at least 8 characters long" })
+        .min(8, { message: 'Password must be at least 8 characters long' })
         .regex(passwordRegex, {
           message:
-            "Password must contain at least 1 uppercase letter, 1 number, and 1 special character",
+            'Password must contain at least 1 uppercase letter, 1 number, and 1 special character',
         }),
       confirmPassword: z.string(),
     })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords must match",
-      path: ["confirmPassword"], // Error will be shown for confirmPassword
-    });
+    .refine(data => data.password === data.confirmPassword, {
+      message: 'Passwords must match',
+      path: ['confirmPassword'], // Error will be shown for confirmPassword
+    })
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     // Assuming you have data state with both password and confirmPassword
     const result = payloadSchema.safeParse({
       password: data.password,
       confirmPassword: data.confirmPassword, // Include confirmPassword in validation
-    });
+    })
 
     if (!result.success) {
       // Display validation error messages in toast
       console.log(
-        result.error.errors.map((error) => error.message).join(", "),
-        "result.error"
-      );
-      toast.error(result.error.errors.map((error) => error.message).join(", "));
+        result.error.errors.map(error => error.message).join(', '),
+        'result.error',
+      )
+      toast.error(result.error.errors.map(error => error.message).join(', '))
     } else {
       // Reset password logic after successful validation
       resetPassword({
         data: { password: data.password },
-        params: { id: id || "" }, // Make sure 'id' is passed as needed
+        params: { id: id || '' }, // Make sure 'id' is passed as needed
         successTrigger: () => {
-          setIsSuccess(true); // Assuming setIsSuccess updates the state
+          setIsSuccess(true) // Assuming setIsSuccess updates the state
         },
-      });
+      })
     }
-  };
+  }
 
-  const togglePasswordVisibility = (field: "password" | "confirmPassword") => {
-    if (field === "password") {
-      setShowPassword({ ...showPassword, password: !showPassword.password });
+  const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
+    if (field === 'password') {
+      setShowPassword({ ...showPassword, password: !showPassword.password })
     } else {
       setShowPassword({
         ...showPassword,
         confirmPassword: !showPassword.confirmPassword,
-      });
+      })
     }
-  };
+  }
   useEffect(() => {
-    console.log(toggleTheme, "toggleTheme");
-  }, [toggleTheme]);
+    console.log(toggleTheme, 'toggleTheme')
+  }, [toggleTheme])
 
   return (
     <>
       <Toaster richColors />
       <div
         className={`min-h-screen flex flex-col items-center justify-center bg-gradient-to-br ${
-          toggleTheme === "dark"
-            ? "from-blue-950 to-black"
+          toggleTheme === 'dark'
+            ? 'from-blue-950 to-black'
             : // : "from-blue-50 to-blue-100"
-              ""
+              ''
         } p-4`}
       >
         <div className="w-full max-w-md">
@@ -113,7 +116,7 @@ export default function StockPasswordReset() {
           <Card className="w-full backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-blue-200 dark:border-blue-900">
             <CardHeader>
               <CardTitle className="text-2xl font-semibold text-center text-blue-800 dark:text-blue-300">
-                {isSuccess ? "Reset Successful" : "Reset Your Password"}
+                {isSuccess ? 'Reset Successful' : 'Reset Your Password'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -141,17 +144,17 @@ export default function StockPasswordReset() {
                     <div className="relative">
                       <Input
                         id="password"
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         required
                         value={data.password}
-                        onChange={(e) =>
+                        onChange={e =>
                           setData({ ...data, password: e.target.value })
                         }
                         className="pr-10 border-blue-300 focus:border-blue-500 focus:ring-blue-500 dark:border-blue-700 dark:focus:border-blue-600 dark:focus:ring-blue-600"
                       />
                       <button
                         type="button"
-                        onClick={() => togglePasswordVisibility("password")}
+                        onClick={() => togglePasswordVisibility('password')}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 dark:text-blue-500"
                       >
                         {showPassword ? (
@@ -173,10 +176,10 @@ export default function StockPasswordReset() {
                       <Input
                         id="confirm-password"
                         type={
-                          showPassword.confirmPassword ? "text" : "password"
+                          showPassword.confirmPassword ? 'text' : 'password'
                         }
                         value={data.confirmPassword}
-                        onChange={(e) =>
+                        onChange={e =>
                           setData({ ...data, confirmPassword: e.target.value })
                         }
                         required
@@ -185,7 +188,7 @@ export default function StockPasswordReset() {
                       <button
                         type="button"
                         onClick={() =>
-                          togglePasswordVisibility("confirmPassword")
+                          togglePasswordVisibility('confirmPassword')
                         }
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 dark:text-blue-500"
                       >
@@ -209,10 +212,10 @@ export default function StockPasswordReset() {
                 <Button
                   className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300"
                   onClick={() => {
-                    navigate("/login");
-                    setField("user", []);
-                    setField("refreshToken", "");
-                    setField("accessToken", "");
+                    navigate('/login')
+                    setField('user', [])
+                    setField('refreshToken', '')
+                    setField('accessToken', '')
                   }}
                 >
                   Return to Login
@@ -261,5 +264,5 @@ export default function StockPasswordReset() {
         </div>
       </div>
     </>
-  );
+  )
 }

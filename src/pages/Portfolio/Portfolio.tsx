@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { FilePenLine, MoreHorizontal, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import BasketForm from "./Components/basket-form";
-import { DataTable } from "@/components/Global/data-table";
+import { motion } from 'framer-motion'
+import { FilePenLine, MoreHorizontal, Plus, Trash2 } from 'lucide-react'
+
+import { useCallback, useEffect, useState } from 'react'
+
+import { useFetchBasketsData } from '@/Queries/portfolio-queries'
+import { DataTable } from '@/components/Global/data-table'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,56 +14,57 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useFetchBasketsData } from "@/Queries/portfolio-queries";
-import { BasketType, CustomColumnDef } from "./portfolio-utils/types";
+} from '@/components/ui/dropdown-menu'
+
+import BasketForm from './Components/basket-form'
+import { BasketType, CustomColumnDef } from './portfolio-utils/types'
 
 const Portfolio = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState("1");
-  const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState('1')
+  const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false)
   const [editPayload, setEditPayload] = useState<BasketType | undefined>(
-    undefined
-  );
+    undefined,
+  )
 
   const {
     data: basketsData,
     isFetching,
     isPlaceholderData,
-  } = useFetchBasketsData(searchTerm, currentPage.toString(), "10");
+  } = useFetchBasketsData(searchTerm, currentPage.toString(), '10')
 
   const columns: CustomColumnDef<BasketType>[] = [
     {
-      id: "Basket Name",
-      accessorKey: "name",
-      header: "Basket Name",
+      id: 'Basket Name',
+      accessorKey: 'name',
+      header: 'Basket Name',
     },
     {
-      id: "stock Count",
-      accessorKey: "stockCount",
-      header: "Stock Count",
+      id: 'stock Count',
+      accessorKey: 'stockCount',
+      header: 'Stock Count',
       cell: () => {
         // const stockCount = row.getValue("stockCount");
-        return <div className="font-medium">0</div>;
+        return <div className="font-medium">0</div>
       },
     },
     {
-      id: "Invested Value",
-      accessorKey: "investedValue",
-      header: "Invested Value",
+      id: 'Invested Value',
+      accessorKey: 'investedValue',
+      header: 'Invested Value',
       cell: ({ row }) => {
         // const amount = parseFloat(row.getValue("amount"));
-        const formatted = new Intl.NumberFormat("en-IN", {
-          style: "currency",
-          currency: "INR",
-        }).format(row.original?.totalInvested);
-        console.log(row.original, "formatted");
+        const formatted = new Intl.NumberFormat('en-IN', {
+          style: 'currency',
+          currency: 'INR',
+        }).format(row.original?.totalInvested)
+        console.log(row.original, 'formatted')
 
-        return <div className="font-medium">{formatted}</div>;
+        return <div className="font-medium">{formatted}</div>
       },
     },
     {
-      id: "actions",
+      id: 'actions',
       cell: ({ row }) => {
         return (
           <DropdownMenu>
@@ -75,8 +78,8 @@ const Portfolio = () => {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => {
-                  setEditPayload(row.original);
-                  setIsBasketDialogOpen(true);
+                  setEditPayload(row.original)
+                  setIsBasketDialogOpen(true)
                 }}
               >
                 <FilePenLine color="#fa7900" />
@@ -85,31 +88,31 @@ const Portfolio = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  setEditPayload(row.original);
-                  setIsBasketDialogOpen(true);
+                  setEditPayload(row.original)
+                  setIsBasketDialogOpen(true)
                 }}
               >
                 <Trash2 color="#fa0000" /> Delete Basket
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        );
+        )
       },
     },
-  ];
-  const [selectedRows, setSelectedRows] = useState<BasketType[]>([]);
+  ]
+  const [selectedRows, setSelectedRows] = useState<BasketType[]>([])
 
   const handleRowSelectionChange = useCallback(
     (rows: BasketType[]) => {
       // console.log(memoizedSelectedRows, "rows");
-      setSelectedRows(rows);
+      setSelectedRows(rows)
     },
-    [setSelectedRows]
-  );
+    [setSelectedRows],
+  )
 
   useEffect(() => {
-    console.log(selectedRows, "selectedRows");
-  }, [selectedRows]);
+    console.log(selectedRows, 'selectedRows')
+  }, [selectedRows])
   return (
     <div className={` mx-auto w-full p-2 h-full overflow-y-auto  `}>
       <motion.div
@@ -128,7 +131,7 @@ const Portfolio = () => {
               variant="secondary"
               className="relative top-[12px]"
               onClick={() => {
-                setIsBasketDialogOpen(true);
+                setIsBasketDialogOpen(true)
               }}
             >
               <Plus className="mr-2 h-4 w-4" /> Create Basket
@@ -166,7 +169,7 @@ const Portfolio = () => {
         setIsBasketDialogOpen={setIsBasketDialogOpen}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Portfolio;
+export default Portfolio

@@ -1,3 +1,7 @@
+import { AnimatePresence, motion } from 'framer-motion'
+import { Edit, Trash2 } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -5,21 +9,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+} from '@/components/ui/table'
 
 interface Stock {
-  id: string;
-  name: string;
-  symbol: string;
-  price: string;
-  basketId: string;
+  id: string
+  name: string
+  symbol: string
+  price: string
+  basketId: string
 }
 interface Basket {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 const StockTable = ({
@@ -30,39 +31,39 @@ const StockTable = ({
   sortConfig,
   requestSort,
 }: {
-  paginatedStocks: Stock[];
-  baskets: Basket[];
-  handleEditStock: (stock: Stock) => void;
-  handleDeleteStock: (id: string) => void;
-  sortConfig: { key: string; direction: string };
-  requestSort: (key: keyof Stock) => void;
+  paginatedStocks: Stock[]
+  baskets: Basket[]
+  handleEditStock: (stock: Stock) => void
+  handleDeleteStock: (id: string) => void
+  sortConfig: { key: string; direction: string }
+  requestSort: (key: keyof Stock) => void
 }) => (
   <Table>
     <TableHeader>
       <TableRow>
         <TableHead
           className="cursor-pointer"
-          onClick={() => requestSort("name")}
+          onClick={() => requestSort('name')}
         >
-          Name{" "}
-          {sortConfig.key === "name" &&
-            (sortConfig.direction === "ascending" ? "▲" : "▼")}
+          Name{' '}
+          {sortConfig.key === 'name' &&
+            (sortConfig.direction === 'ascending' ? '▲' : '▼')}
         </TableHead>
         <TableHead
           className="cursor-pointer"
-          onClick={() => requestSort("symbol")}
+          onClick={() => requestSort('symbol')}
         >
-          Symbol{" "}
-          {sortConfig.key === "symbol" &&
-            (sortConfig.direction === "ascending" ? "▲" : "▼")}
+          Symbol{' '}
+          {sortConfig.key === 'symbol' &&
+            (sortConfig.direction === 'ascending' ? '▲' : '▼')}
         </TableHead>
         <TableHead
           className="cursor-pointer"
-          onClick={() => requestSort("price")}
+          onClick={() => requestSort('price')}
         >
-          Price{" "}
-          {sortConfig.key === "price" &&
-            (sortConfig.direction === "ascending" ? "▲" : "▼")}
+          Price{' '}
+          {sortConfig.key === 'price' &&
+            (sortConfig.direction === 'ascending' ? '▲' : '▼')}
         </TableHead>
         <TableHead>Basket</TableHead>
         <TableHead>Actions</TableHead>
@@ -70,7 +71,7 @@ const StockTable = ({
     </TableHeader>
     <TableBody>
       <AnimatePresence>
-        {paginatedStocks.map((stock) => (
+        {paginatedStocks.map(stock => (
           <motion.tr
             key={stock.id}
             initial={{ opacity: 0 }}
@@ -82,7 +83,7 @@ const StockTable = ({
             <TableCell>{stock.symbol}</TableCell>
             <TableCell>${stock.price}</TableCell>
             <TableCell>
-              {baskets.find((basket) => basket.id === stock.basketId)?.name}
+              {baskets.find(basket => basket.id === stock.basketId)?.name}
             </TableCell>
             <TableCell>
               <div className="flex space-x-2">
@@ -117,6 +118,6 @@ const StockTable = ({
       </AnimatePresence>
     </TableBody>
   </Table>
-);
+)
 
-export default StockTable;
+export default StockTable

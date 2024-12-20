@@ -1,16 +1,24 @@
-import { useEffect, useState } from "react";
 import {
-  flexRender,
-  SortingState,
-  getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  getSortedRowModel,
-  VisibilityState,
   Table as ReactTable,
   Row,
-} from "@tanstack/react-table";
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 
+import { useEffect, useState } from 'react'
+
+import { PaginationType } from '@/Queries/queries-utils/types'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -18,38 +26,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/table'
+import { CustomColumnDef } from '@/pages/Portfolio/portfolio-utils/types'
 
-import { Button } from "../ui/button";
-import { PaginationType } from "@/Queries/queries-utils/types";
-import { Checkbox } from "../ui/checkbox";
-import { SearchInput } from "./search-input";
-import { CustomColumnDef } from "@/pages/Portfolio/portfolio-utils/types";
-import TableLoading from "./Table-Loading";
+import { Button } from '../ui/button'
+import { Checkbox } from '../ui/checkbox'
+import TableLoading from './Table-Loading'
+import { SearchInput } from './search-input'
 
 interface DataTableProps<TData> {
-  columns: CustomColumnDef<TData>[]; // Use the corrected CustomColumnDef type
-  data: TData[];
-  onRowSelectionChange?: (selectedRows: TData[]) => void;
+  columns: CustomColumnDef<TData>[] // Use the corrected CustomColumnDef type
+  data: TData[]
+  onRowSelectionChange?: (selectedRows: TData[]) => void
   pagination?: {
-    metadata: PaginationType | undefined;
-    currentPage: string | "1";
-    setCurrentPage: (currentPage: string) => void;
-  };
+    metadata: PaginationType | undefined
+    currentPage: string | '1'
+    setCurrentPage: (currentPage: string) => void
+  }
   search?: {
-    searchTerm: string;
-    setSearchTerm: (searchTerm: string) => void;
-  };
-  visibleColumn?: boolean;
-  title?: string;
-  fetching?: boolean;
-  placeholderData?: boolean;
+    searchTerm: string
+    setSearchTerm: (searchTerm: string) => void
+  }
+  visibleColumn?: boolean
+  title?: string
+  fetching?: boolean
+  placeholderData?: boolean
 }
 
 export function DataTable<TData>({
@@ -63,34 +64,34 @@ export function DataTable<TData>({
   fetching,
   placeholderData,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [hasPreviousPage, setHasPreviousPage] = useState(false);
-  const [totalItems, setTotalItems] = useState("0");
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [hasNextPage, setHasNextPage] = useState(false)
+  const [hasPreviousPage, setHasPreviousPage] = useState(false)
+  const [totalItems, setTotalItems] = useState('0')
 
   useEffect(() => {
     if (pagination?.metadata) {
-      setHasNextPage(pagination?.metadata?.hasNextPage || false);
-      setHasPreviousPage(pagination?.metadata?.hasPreviousPage || false);
-      setTotalItems(pagination?.metadata?.totalItems || "0");
+      setHasNextPage(pagination?.metadata?.hasNextPage || false)
+      setHasPreviousPage(pagination?.metadata?.hasPreviousPage || false)
+      setTotalItems(pagination?.metadata?.totalItems || '0')
     }
-  }, [pagination]);
+  }, [pagination])
 
   // Dynamically add the select column if onRowSelectionChange is defined
   const modifiedColumns = [
     ...(onRowSelectionChange
       ? [
           {
-            id: "select",
+            id: 'select',
             header: ({ table }: { table: ReactTable<TData> }) => (
               <Checkbox
                 checked={
                   table.getIsAllPageRowsSelected() ||
-                  (table.getIsSomePageRowsSelected() && "indeterminate")
+                  (table.getIsSomePageRowsSelected() && 'indeterminate')
                 }
-                onCheckedChange={(value) =>
+                onCheckedChange={value =>
                   table.toggleAllPageRowsSelected(!!value)
                 }
                 aria-label="Select all"
@@ -99,7 +100,7 @@ export function DataTable<TData>({
             cell: ({ row }: { row: Row<TData> }) => (
               <Checkbox
                 checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onCheckedChange={value => row.toggleSelected(!!value)}
                 aria-label="Select row"
               />
             ),
@@ -109,7 +110,7 @@ export function DataTable<TData>({
         ]
       : []),
     ...columns,
-  ];
+  ]
 
   const table = useReactTable({
     data,
@@ -125,14 +126,14 @@ export function DataTable<TData>({
       rowSelection,
       columnVisibility,
     },
-  });
+  })
 
   useEffect(() => {
     const selectedRows = table
       .getSelectedRowModel()
-      .rows.map((row) => row.original);
-    onRowSelectionChange?.(selectedRows);
-  }, [rowSelection, onRowSelectionChange, table]);
+      .rows.map(row => row.original)
+    onRowSelectionChange?.(selectedRows)
+  }, [rowSelection, onRowSelectionChange, table])
 
   return (
     <div className="p-3">
@@ -158,24 +159,24 @@ export function DataTable<TData>({
                 {table
                   .getAllColumns()
                   .filter(
-                    (column) =>
+                    column =>
                       column.getCanHide() &&
-                      column.id !== "actions" &&
-                      column.id !== "select"
+                      column.id !== 'actions' &&
+                      column.id !== 'select',
                   )
-                  .map((column) => {
+                  .map(column => {
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}
                         className="capitalize"
                         checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
+                        onCheckedChange={value =>
                           column.toggleVisibility(!!value)
                         }
                       >
                         {column.id}
                       </DropdownMenuCheckboxItem>
-                    );
+                    )
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -185,20 +186,20 @@ export function DataTable<TData>({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
                     style={{
-                      width: header.column.columnDef.meta?.width || "auto",
+                      width: header.column.columnDef.meta?.width || 'auto',
                     }}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -216,21 +217,21 @@ export function DataTable<TData>({
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() ? "selected" : undefined}
+                  data-state={row.getIsSelected() ? 'selected' : undefined}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell
                       key={cell.id}
                       style={{
-                        width: cell.column.columnDef.meta?.width || "auto",
+                        width: cell.column.columnDef.meta?.width || 'auto',
                       }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -255,8 +256,8 @@ export function DataTable<TData>({
             variant="outline"
             size="sm"
             onClick={() => {
-              const value = parseInt(pagination?.currentPage) - 1;
-              pagination?.setCurrentPage(value?.toString());
+              const value = parseInt(pagination?.currentPage) - 1
+              pagination?.setCurrentPage(value?.toString())
             }}
             disabled={!hasPreviousPage}
           >
@@ -266,8 +267,8 @@ export function DataTable<TData>({
             variant="outline"
             size="sm"
             onClick={() => {
-              const value = parseInt(pagination?.currentPage) + 1;
-              pagination?.setCurrentPage(value.toString());
+              const value = parseInt(pagination?.currentPage) + 1
+              pagination?.setCurrentPage(value.toString())
             }}
             disabled={!hasNextPage}
           >
@@ -276,5 +277,5 @@ export function DataTable<TData>({
         </div>
       )}
     </div>
-  );
+  )
 }

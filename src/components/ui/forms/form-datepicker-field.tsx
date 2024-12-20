@@ -1,27 +1,29 @@
-import { Control, FieldValues, Path } from "react-hook-form";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from 'date-fns'
+import { Calendar as CalendarIcon } from 'lucide-react'
+import { Control, FieldValues, Path } from 'react-hook-form'
+
+import { Button } from '@/components/ui/button'
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form";
-import { format } from "date-fns";
-import { Calendar } from "../calendar";
+} from '@/components/ui/form'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/popover'
+
+import { Calendar } from '../calendar'
 
 interface FormFieldCalendarProps<T extends FieldValues> {
-  label: string;
-  name: Path<T>;
-  disabledAt?: (date: Date) => boolean;
-  placeholder?: string;
-  required?: boolean;
-  control: Control<T>;
+  label: string
+  name: Path<T>
+  disabledAt?: (date: Date) => boolean
+  placeholder?: string
+  required?: boolean
+  control: Control<T>
 }
 
 const FormFieldCalendar = <T extends FieldValues>({
@@ -46,13 +48,13 @@ const FormFieldCalendar = <T extends FieldValues>({
               <PopoverTrigger asChild>
                 <FormControl>
                   <Button
-                    variant={"outline"}
+                    variant={'outline'}
                     className={
-                      "flex h-12 w-full rounded-md bg-transparent px-3 py-1 text-sm font-[400] border-[1px] border-bordercolor placeholder:text-placeholder placeholder:font-normal file:text-sm file:font-medium focus:border-[1px] focus:border-[#1551B2] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none "
+                      'flex h-12 w-full rounded-md bg-transparent px-3 py-1 text-sm font-[400] border-[1px] border-bordercolor placeholder:text-placeholder placeholder:font-normal file:text-sm file:font-medium focus:border-[1px] focus:border-[#1551B2] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none '
                     }
                   >
                     {field.value ? (
-                      format(field.value, "MM/dd/yyyy")
+                      format(field.value, 'MM/dd/yyyy')
                     ) : (
                       <span>{placeholder}</span>
                     )}
@@ -65,8 +67,8 @@ const FormFieldCalendar = <T extends FieldValues>({
                   mode="single"
                   selected={field.value}
                   onSelect={field.onChange}
-                  disabled={(date) =>
-                    date > new Date() || date < new Date("1900-01-01")
+                  disabled={date =>
+                    date > new Date() || date < new Date('1900-01-01')
                   }
                   initialFocus
                 />
@@ -79,7 +81,7 @@ const FormFieldCalendar = <T extends FieldValues>({
         )}
       />
     </FormItem>
-  );
-};
+  )
+}
 
-export default FormFieldCalendar;
+export default FormFieldCalendar

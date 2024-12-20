@@ -1,18 +1,31 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  BadgeIndianRupee,
+  Handshake,
+  NotepadText,
+  TicketCheck,
+  TrendingUp,
+} from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
+import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import {
+  useCreateStockPost,
+  useFetchBrokersData,
+  useFetchTickersData,
+} from '@/Queries/portfolio-queries'
+import { usePortfolioStore } from '@/Store/PortfolioStore'
 // UI Components
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -20,46 +33,34 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import FormInput from "@/components/ui/forms/form-input-field";
-
-// Data and Types
-import { createStockSchema } from "@/schema";
-import { usePortfolioStore } from "@/Store/PortfolioStore";
-import {
-  useCreateStockPost,
-  useFetchBrokersData,
-  useFetchTickersData,
-} from "@/Queries/portfolio-queries";
-import { FormReactSelect } from "@/components/ui/forms/form-react-select";
+} from '@/components/ui/form'
+import FormInput from '@/components/ui/forms/form-input-field'
+import { FormReactSelect } from '@/components/ui/forms/form-react-select'
+import { Textarea } from '@/components/ui/textarea'
 // import { Select } from '@/components/ui/react-select';
-import { useDebounce } from "@/hooks/useDebounce";
-import {
-  BadgeIndianRupee,
-  Handshake,
-  NotepadText,
-  TicketCheck,
-  TrendingUp,
-} from "lucide-react";
-import { CreateStockPayload, StocksType } from "./portfolio-utils/types";
+import { useDebounce } from '@/hooks/useDebounce'
+// Data and Types
+import { createStockSchema } from '@/schema'
+
+import { CreateStockPayload, StocksType } from './portfolio-utils/types'
 
 type OptionType = {
-  label: string;
-  value: string;
-};
+  label: string
+  value: string
+}
 
-type FormValues = z.infer<typeof createStockSchema>;
+type FormValues = z.infer<typeof createStockSchema>
 
 type StocksFormProps = {
-  editPayload?: StocksType;
-  isStocksDialogOpen: boolean;
-  setIsStocksDialogOpen: (value: boolean) => void;
-};
+  editPayload?: StocksType
+  isStocksDialogOpen: boolean
+  setIsStocksDialogOpen: (value: boolean) => void
+}
 
 const DEFAULT_QUERY_PARAMS = {
-  page: "1",
-  size: "10",
-} as const;
+  page: '1',
+  size: '10',
+} as const
 
 export function StockRecords({
   editPayload,
@@ -67,68 +68,68 @@ export function StockRecords({
   setIsStocksDialogOpen,
 }: StocksFormProps) {
   // State
-  const [pending, setPending] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [brokerSearchTerm, setBrokerSearchTerm] = useState("");
-  const [options, setOptions] = useState<OptionType[]>([]);
-  const [brokerOptions, setBrokerOptions] = useState<OptionType[]>([]);
+  const [pending, setPending] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [brokerSearchTerm, setBrokerSearchTerm] = useState('')
+  const [options, setOptions] = useState<OptionType[]>([])
+  const [brokerOptions, setBrokerOptions] = useState<OptionType[]>([])
 
   // Debounce the search terms
-  const debouncedSearchTerm = useDebounce(searchTerm);
-  const debouncedBrokerSearchTerm = useDebounce(brokerSearchTerm);
+  const debouncedSearchTerm = useDebounce(searchTerm)
+  const debouncedBrokerSearchTerm = useDebounce(brokerSearchTerm)
 
   // Store and Queries
-  const { selectedBasketOption } = usePortfolioStore();
-  const { mutate: createBasket } = useCreateStockPost();
+  const { selectedBasketOption } = usePortfolioStore()
+  const { mutate: createBasket } = useCreateStockPost()
   const { data: tickersData, isFetching: isTickersFetching } =
     useFetchTickersData({
       search: debouncedSearchTerm,
       ...DEFAULT_QUERY_PARAMS,
-      symbolType: "EQUITY",
-    });
+      symbolType: 'EQUITY',
+    })
   const { data: brokersData, isFetching: isBrokersFetching } =
     useFetchBrokersData({
       search: debouncedBrokerSearchTerm,
       ...DEFAULT_QUERY_PARAMS,
-    });
+    })
 
   const selectedBasketId = useMemo(
     () => selectedBasketOption.value,
-    [selectedBasketOption]
-  );
+    [selectedBasketOption],
+  )
 
   // Form Setup
   const form = useForm<FormValues>({
     resolver: zodResolver(createStockSchema),
     defaultValues: {
       basketId: selectedBasketId,
-      tickerId: editPayload?.stock_baskets?.tickerId || "",
-      brokerId: editPayload?.brokerId || "",
-      buyPrice: editPayload?.buyPrice?.toString() || "",
-      quantity: editPayload?.quantity?.toString() || "",
-      totalInvested: editPayload?.totalInvested?.toString() || "",
-      notes: editPayload?.notes || "",
+      tickerId: editPayload?.stock_baskets?.tickerId || '',
+      brokerId: editPayload?.brokerId || '',
+      buyPrice: editPayload?.buyPrice?.toString() || '',
+      quantity: editPayload?.quantity?.toString() || '',
+      totalInvested: editPayload?.totalInvested?.toString() || '',
+      notes: editPayload?.notes || '',
     },
-    mode: "onBlur",
-  });
+    mode: 'onBlur',
+  })
 
-  const { setValue, watch, reset, control, handleSubmit } = form;
-  const [buyPrice, quantity] = watch(["buyPrice", "quantity"]);
+  const { setValue, watch, reset, control, handleSubmit } = form
+  const [buyPrice, quantity] = watch(['buyPrice', 'quantity'])
 
   // Add this to debug form errors
-  console.log("Form errors:", form.formState.errors);
+  console.log('Form errors:', form.formState.errors)
 
   // Handlers
   const handleClose = useCallback(() => {
-    setIsStocksDialogOpen(false);
-    reset();
-  }, [setIsStocksDialogOpen, reset]);
+    setIsStocksDialogOpen(false)
+    reset()
+  }, [setIsStocksDialogOpen, reset])
 
   const handleCreateStock = useCallback(
     (data: FormValues) => {
       if (!selectedBasketOption.value) {
-        toast.error("Please select a basket");
-        return;
+        toast.error('Please select a basket')
+        return
       }
 
       const payload: CreateStockPayload = {
@@ -139,60 +140,60 @@ export function StockRecords({
         totalInvested: Number(data.totalInvested),
         brokerId: data.brokerId,
         notes: data.notes,
-      };
+      }
 
       createBasket({
         data: payload,
         successTrigger: handleClose,
-      });
+      })
     },
-    [selectedBasketOption.value, createBasket, handleClose]
-  );
+    [selectedBasketOption.value, createBasket, handleClose],
+  )
 
   const onSubmit = useCallback(
     async (data: FormValues) => {
       try {
-        setPending(true);
+        setPending(true)
         if (!editPayload) {
-          handleCreateStock(data);
+          handleCreateStock(data)
         }
       } catch (error) {
-        console.error("Form submission error:", error);
-        toast.error("Failed to submit form");
+        console.error('Form submission error:', error)
+        toast.error('Failed to submit form')
       } finally {
-        setPending(false);
+        setPending(false)
       }
     },
-    [editPayload, handleCreateStock]
-  );
+    [editPayload, handleCreateStock],
+  )
 
   // Effects
   useEffect(() => {
     if (tickersData) {
-      const formattedOptions = tickersData.data.map((item) => ({
+      const formattedOptions = tickersData.data.map(item => ({
         label: `${item.shortName} (${item.symbolId})`,
         value: item.symbolId,
-      }));
-      setOptions(formattedOptions);
+      }))
+      setOptions(formattedOptions)
     }
-  }, [tickersData]);
+  }, [tickersData])
 
   useEffect(() => {
     if (brokersData) {
-      const formattedOptions = brokersData.data.map((item) => ({
+      const formattedOptions = brokersData.data.map(item => ({
         label: item.brokerName,
         value: item.id,
-      }));
-      setBrokerOptions(formattedOptions);
+      }))
+      setBrokerOptions(formattedOptions)
     }
-  }, [brokersData]);
+  }, [brokersData])
 
   useEffect(() => {
     if (buyPrice && quantity) {
-      const total = (Number(buyPrice) * Number(quantity)).toString();
-      setValue("totalInvested", total);
+      const total = (Number(buyPrice) * Number(quantity)).toString()
+      setValue('totalInvested', total)
     }
-  }, [buyPrice, quantity, setValue]);
+  }, [buyPrice, quantity, setValue])
 
   const renderFormFields = () => (
     <>
@@ -280,7 +281,7 @@ export function StockRecords({
         )}
       />
     </>
-  );
+  )
 
   return (
     <Dialog open={isStocksDialogOpen} onOpenChange={setIsStocksDialogOpen}>
@@ -305,8 +306,8 @@ export function StockRecords({
             <DialogTitle className="text-2xl">Add Stock</DialogTitle>
             <p className="m-0 text-sm text-gray-300">
               {editPayload
-                ? "Edit the stock details"
-                : "Enter the details of the stock you want to add to your portfolio."}
+                ? 'Edit the stock details'
+                : 'Enter the details of the stock you want to add to your portfolio.'}
             </p>
           </div>
         </DialogHeader>
@@ -331,11 +332,11 @@ export function StockRecords({
               >
                 {editPayload
                   ? pending
-                    ? "Updating..."
-                    : "Update"
+                    ? 'Updating...'
+                    : 'Update'
                   : pending
-                  ? "Creating..."
-                  : "Create Stock"}
+                    ? 'Creating...'
+                    : 'Create Stock'}
               </Button>
               {/* <Button
 								type="button"
@@ -352,7 +353,7 @@ export function StockRecords({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 
-export default StockRecords;
+export default StockRecords
