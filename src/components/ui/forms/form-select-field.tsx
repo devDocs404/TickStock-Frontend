@@ -40,7 +40,7 @@ export default function FormSelectField<T extends FieldValues>({
         );
 
         return (
-          <FormItem>
+          <FormItem className={"w-full"}>
             <FormLabel>{label}</FormLabel>
             <FormControl>
               <CustomSelect

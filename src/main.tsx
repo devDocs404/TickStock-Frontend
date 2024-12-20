@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { AppProviders } from "./providers/app-providers";
-import { StrictMode } from "react";
 import { App } from "./App";
 
 const container = document.getElementById("root");
@@ -13,9 +12,7 @@ if (!container) {
 const root = createRoot(container);
 
 root.render(
-  <StrictMode>
-    <AppProviders>
-      <App />
-    </AppProviders>
-  </StrictMode>
+  <AppProviders>
+    <App />
+  </AppProviders>
 );

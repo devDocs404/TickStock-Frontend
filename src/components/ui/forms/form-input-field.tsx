@@ -16,6 +16,8 @@ interface FormInputProps<T extends FieldValues> {
   disabled?: boolean;
   onChange?: () => void;
   convertToString?: boolean;
+  required?: boolean;
+  icon?: React.ReactNode;
 }
 
 function FormInput<T extends FieldValues>({
@@ -25,8 +27,9 @@ function FormInput<T extends FieldValues>({
   placeholder = "",
   type = "text",
   disabled,
-
   convertToString,
+  required = false,
+  icon,
 }: FormInputProps<T>) {
   return (
     <Controller
@@ -36,19 +39,24 @@ function FormInput<T extends FieldValues>({
         <FormItem>
           <FormLabel className={fieldState.error ? "text-red-600" : ""}>
             {label}
+            {required && <span className="text-red-600">*</span>}
           </FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              placeholder={placeholder}
-              type={type}
-              disabled={disabled}
-              onChange={
-                convertToString
-                  ? (e) => field.onChange(e.target.value.toString())
-                  : undefined
-              }
-            />
+            <div className="relative">
+              {icon && icon}
+              <Input
+                {...field}
+                placeholder={placeholder}
+                className={icon ? "pl-8" : "pl-2"}
+                type={type}
+                disabled={disabled}
+                onChange={
+                  convertToString
+                    ? (e) => field.onChange(e.target.value.toString())
+                    : undefined
+                }
+              />
+            </div>
           </FormControl>
           {fieldState.error && (
             <FormMessage>{fieldState.error.message}</FormMessage>

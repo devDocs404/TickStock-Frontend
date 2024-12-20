@@ -12,6 +12,9 @@ import { toast } from "sonner";
 // import { useAuthStore } from "@/Store/AuthStore";
 import {
   BasketType,
+  BrokerType,
+  CreateStockPayload,
+  StockBasketDetailsType,
   StocksType,
   TickerType,
 } from "@/pages/Portfolio/portfolio-utils/types";
@@ -47,27 +50,35 @@ export function useFetchBasketsData(
   });
 }
 
-export function useFetchTickersData(
-  search: string,
-  page: string,
-  size: string
-) {
+export function useFetchTickersData(payload: {
+  search: string;
+  page: string;
+  size: string;
+  symbolId?: string;
+  symbolType?: string;
+}) {
   const { handleResponse } = useResponseHandler();
-
+  const { search, page, size, symbolId, symbolType } = payload;
   return useQuery<ApiResponse<TickerType>, Error>({
-    queryKey: ["tickers", { search, page, size }],
+    queryKey: ["tickers", { search, page, size, symbolId, symbolType }],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey as [
         string,
-        { search: string; page: string; size: string }
+        {
+          search: string;
+          page: string;
+          size: string;
+          symbolId?: string;
+          symbolType?: string;
+        }
       ];
-      const { search, page, size } = params;
+      const { search, page, size, symbolId, symbolType } = params;
 
       const url = `protected/ticker`;
       const response = await handleResponse<ApiResponse<TickerType>>({
         url,
         type: "get",
-        payload: { params: { search, page, size } },
+        payload: { params: { search, page, size, symbolId, symbolType } },
       });
       return response.data;
     },
@@ -80,12 +91,13 @@ export function useFetchStocksData(
   search: string,
   page: string,
   size: string,
-  basketId: string
+  basketId: string,
+  stockBasketId?: string
 ): UseQueryResult<ApiResponse<StocksType>, Error> {
   const { handleResponse } = useResponseHandler();
 
   return useQuery<ApiResponse<StocksType>, Error>({
-    queryKey: ["stocks", { search, page, size, basketId }],
+    queryKey: ["stocks", { search, page, size, basketId, stockBasketId }],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey as [
         string,
@@ -97,8 +109,58 @@ export function useFetchStocksData(
         return dummyResponse as ApiResponse<StocksType>;
       }
 
-      const url = `protected/stocks`;
+      const url = `protected/get-stock-records`;
       const response = await handleResponse<ApiResponse<StocksType>>({
+        url,
+        type: "get",
+        payload: { params: { search, page, size, basketId, stockBasketId } },
+      });
+      return response.data;
+    },
+    placeholderData: keepPreviousData,
+    retry: false,
+  });
+}
+// export function useFetchStockBasketsData(
+// 	search: string,
+// 	page: string,
+// 	size: string,
+// 	basketId: string
+// ): UseQueryResult<ApiResponse<StockBasketDetailsType>, Error> {
+// 	const { handleResponse } = useResponseHandler();
+
+// 	return useQuery<ApiResponse<StockBasketDetailsType>, Error>({
+// 		queryKey: ['stocksBaskets', { search, page, size, basketId }],
+// 		queryFn: async () => {
+// 			const url = `protected/get-stock-basket`;
+// 			const response = await handleResponse<
+// 				ApiResponse<StockBasketDetailsType>
+// 			>({
+// 				url,
+// 				type: 'get',
+// 				payload: { params: { search, page, size, basketId } },
+// 			});
+// 			return response.data;
+// 		},
+// 		placeholderData: keepPreviousData,
+// 		retry: false,
+// 	});
+// }
+
+export function useFetchStockBasketsData(
+  search: string,
+  page: string,
+  size: string,
+  basketId: string | undefined
+): UseQueryResult<ApiResponse<StockBasketDetailsType>, Error> {
+  const { handleResponse } = useResponseHandler();
+  return useQuery<ApiResponse<StockBasketDetailsType>, Error>({
+    queryKey: ["stocksBaskets", { search, page, size, basketId }],
+    queryFn: async () => {
+      const url = `protected/get-stock-basket`;
+      const response = await handleResponse<
+        ApiResponse<StockBasketDetailsType>
+      >({
         url,
         type: "get",
         payload: { params: { search, page, size, basketId } },
@@ -107,6 +169,7 @@ export function useFetchStocksData(
     },
     placeholderData: keepPreviousData,
     retry: false,
+    enabled: !!basketId,
   });
 }
 
@@ -116,8 +179,13 @@ export function useCreateBasketPost() {
 
   return useMutation({
     mutationFn: async (payload: {
-      data: { basketName: string };
-
+      data: {
+        name: string;
+        description: string | null;
+        type: string | null;
+        strategy: string | null;
+        riskLevel: string | null;
+      };
       successTrigger: () => void;
     }) => {
       const uploadPayload = {
@@ -135,7 +203,13 @@ export function useCreateBasketPost() {
     onSuccess: (
       _: unknown,
       payload: {
-        data: { basketName: string };
+        data: {
+          name: string;
+          description: string | null;
+          type: string | null;
+          strategy: string | null;
+          riskLevel: string | null;
+        };
         successTrigger: () => void;
       }
     ) => {
@@ -157,29 +231,43 @@ export function useCreateBasketPost() {
 export function useUpdateBasketPatch() {
   const { handleResponse } = useResponseHandler();
   const queryClient = useQueryClient();
+  console.log("update basket patch");
 
   return useMutation({
     mutationFn: async (payload: {
-      data: { basketName: string };
+      data: {
+        name: string;
+        description: string | null;
+        type: string | null;
+        strategy: string | null;
+        riskLevel: string | null;
+      };
       params: { id: string };
       successTrigger: () => void;
     }) => {
+      console.log("upload payload", payload);
       const uploadPayload = {
         data: payload.data,
       };
       return await handleResponse({
-        url: `protected/basket/${payload.params.id}`,
+        url: `protected/basket`,
         type: "patch",
         payload: {
-          ...uploadPayload,
           data: uploadPayload.data,
+          params: payload.params,
         },
       });
     },
     onSuccess: (
       _: unknown,
       payload: {
-        data: { basketName: string };
+        data: {
+          name: string;
+          description: string | null;
+          type: string | null;
+          strategy: string | null;
+          riskLevel: string | null;
+        };
         successTrigger: () => void;
         params: { id: string };
       }
@@ -242,11 +330,12 @@ export function useCreateStockPost() {
 
   return useMutation({
     mutationFn: async (payload: {
-      data: StocksType;
+      data: CreateStockPayload;
       successTrigger: () => void;
     }) => {
+      console.log("create stock payload", payload);
       return await handleResponse({
-        url: "protected/stock",
+        url: "protected/stock-basket",
         type: "post",
         payload: {
           data: payload.data,
@@ -256,7 +345,7 @@ export function useCreateStockPost() {
     onSuccess: (
       _: unknown,
       payload: {
-        data: StocksType;
+        data: CreateStockPayload;
         successTrigger: () => void;
       }
     ) => {
@@ -272,5 +361,39 @@ export function useCreateStockPost() {
         });
       }
     },
+  });
+}
+
+export function useFetchBrokersData(payload: {
+  search: string;
+  page: string;
+  size: string;
+  brokerId?: string;
+}) {
+  const { handleResponse } = useResponseHandler();
+  const { search, page, size, brokerId } = payload;
+  return useQuery<ApiResponse<BrokerType>, Error>({
+    queryKey: ["brokers", { search, page, size, brokerId }],
+    queryFn: async ({ queryKey }) => {
+      const [, params] = queryKey as [
+        string,
+        {
+          search: string;
+          page: string;
+          size: string;
+          brokerId?: string;
+        }
+      ];
+      const { search, page, size, brokerId } = params;
+
+      const url = `protected/broker`;
+      const response = await handleResponse<ApiResponse<BrokerType>>({
+        url,
+        type: "get",
+        payload: { params: { search, page, size, brokerId } },
+      });
+      return response.data;
+    },
+    placeholderData: keepPreviousData,
   });
 }

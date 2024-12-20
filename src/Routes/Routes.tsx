@@ -38,7 +38,7 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
           children: [
             {
               path: "/portfolio/baskets",
-              index: true, // Default child route for "/portfolio"
+              index: true,
               element: (
                 <ProtectedRoutes>
                   <Portfolio />
@@ -47,12 +47,30 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
             },
             {
               path: "/portfolio/stocks",
-              index: true, // Default child route for "/portfolio"
               element: (
                 <ProtectedRoutes>
-                  <PortfolioStocks />
+                  <Outlet />
                 </ProtectedRoutes>
               ),
+              children: [
+                {
+                  path: "/portfolio/stocks",
+                  index: true,
+                  element: (
+                    <ProtectedRoutes>
+                      <PortfolioStocks />
+                    </ProtectedRoutes>
+                  ),
+                },
+                {
+                  path: "/portfolio/stocks/:stockId",
+                  element: (
+                    <ProtectedRoutes>
+                      <PortfolioStocks />
+                    </ProtectedRoutes>
+                  ),
+                },
+              ],
             },
           ],
         },

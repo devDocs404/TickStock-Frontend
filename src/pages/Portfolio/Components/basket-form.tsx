@@ -40,35 +40,48 @@ const BasketForm = ({
   const form = useForm({
     resolver: zodResolver(createBasketSchema),
     defaultValues: {
-      basketName: editPayload?.basketName || "",
+      name: editPayload?.name || "",
     },
   });
   const { handleSubmit, reset, setValue } = form;
-  // const basketName = watch("basketName");
+  // const name = watch("name");
   useEffect(() => {
     if (editPayload) {
-      setValue("basketName", editPayload.basketName);
+      setValue("name", editPayload.name);
     }
   }, [editPayload, setValue]);
 
   const onSubmit = async (data: z.infer<typeof createBasketSchema>) => {
     setPending(true);
     if (editPayload) {
+      console.log("edit payload", editPayload);
       updateBasket({
-        data: { basketName: data.basketName },
+        data: {
+          name: data.name,
+          description: null,
+          type: "custom",
+          strategy: null,
+          riskLevel: null,
+        },
         params: { id: editPayload.id },
         successTrigger: () => {
           setIsBasketDialogOpen(false);
-          reset({ basketName: "" });
+          reset({ name: "" });
         },
       });
     } else {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       createBasket({
-        data: { basketName: data.basketName },
+        data: {
+          name: data.name,
+          description: null,
+          type: null,
+          strategy: null,
+          riskLevel: null,
+        },
         successTrigger: () => {
           setIsBasketDialogOpen(false);
-          reset({ basketName: "" });
+          reset({ name: "" });
         },
       });
       console.log("create");
@@ -78,7 +91,11 @@ const BasketForm = ({
   };
 
   return (
-    <Dialog open={isBasketDialogOpen} onOpenChange={setIsBasketDialogOpen}>
+    <Dialog
+      open={isBasketDialogOpen}
+      onOpenChange={setIsBasketDialogOpen}
+      // className="w-full"
+    >
       {/* <DialogTrigger asChild>
         <Button variant="secondary" className="relative top-[12px]">
           <Plus className="mr-2 h-4 w-4" /> Create Basket
@@ -94,7 +111,7 @@ const BasketForm = ({
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="basketName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Basket Name</FormLabel>

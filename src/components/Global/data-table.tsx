@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  ColumnDef,
   flexRender,
   SortingState,
   getCoreRowModel,
@@ -31,9 +30,11 @@ import { Button } from "../ui/button";
 import { PaginationType } from "@/Queries/queries-utils/types";
 import { Checkbox } from "../ui/checkbox";
 import { SearchInput } from "./search-input";
+import { CustomColumnDef } from "@/pages/Portfolio/portfolio-utils/types";
+import TableLoading from "./Table-Loading";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: CustomColumnDef<TData>[]; // Use the corrected CustomColumnDef type
   data: TData[];
   onRowSelectionChange?: (selectedRows: TData[]) => void;
   pagination?: {
@@ -47,9 +48,11 @@ interface DataTableProps<TData, TValue> {
   };
   visibleColumn?: boolean;
   title?: string;
+  fetching?: boolean;
+  placeholderData?: boolean;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData>({
   columns,
   data,
   onRowSelectionChange,
@@ -57,7 +60,9 @@ export function DataTable<TData, TValue>({
   search,
   visibleColumn,
   title,
-}: DataTableProps<TData, TValue>) {
+  fetching,
+  placeholderData,
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -182,30 +187,47 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: header.column.columnDef.meta?.width || "auto",
+                    }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {fetching && !placeholderData ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <TableLoading />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() ? "selected" : undefined}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        width: cell.column.columnDef.meta?.width || "auto",
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

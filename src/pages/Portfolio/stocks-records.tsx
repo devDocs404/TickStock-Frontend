@@ -25,7 +25,6 @@ import FormInput from "@/components/ui/forms/form-input-field";
 
 // Data and Types
 import { createStockSchema } from "@/schema";
-import { StocksType, CreateStockPayload } from "../portfolio-utils/types";
 import { usePortfolioStore } from "@/Store/PortfolioStore";
 import {
   useCreateStockPost,
@@ -42,6 +41,7 @@ import {
   TicketCheck,
   TrendingUp,
 } from "lucide-react";
+import { CreateStockPayload, StocksType } from "./portfolio-utils/types";
 
 type OptionType = {
   label: string;
@@ -61,7 +61,7 @@ const DEFAULT_QUERY_PARAMS = {
   size: "10",
 } as const;
 
-export function StocksForm({
+export function StockRecords({
   editPayload,
   isStocksDialogOpen,
   setIsStocksDialogOpen,
@@ -355,4 +355,4 @@ export function StocksForm({
   );
 }
 
-export default StocksForm;
+export default StockRecords;

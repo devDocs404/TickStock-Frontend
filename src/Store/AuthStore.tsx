@@ -7,6 +7,7 @@ interface StoreState {
   user: unknown[];
   accessToken: string;
   refreshToken: string;
+  manualTheme: string;
 
   // Setters for each field
   setField: <T extends keyof StoreState>(key: T, value: StoreState[T]) => void;
@@ -16,6 +17,7 @@ const initialState: Omit<StoreState, "setField"> = {
   user: [],
   accessToken: "",
   refreshToken: "",
+  manualTheme: "",
 };
 
 const useAuthStore = create<StoreState>()(

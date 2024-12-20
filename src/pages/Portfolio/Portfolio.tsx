@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BasketForm from "./Components/basket-form";
 import { DataTable } from "@/components/Global/data-table";
-import { ColumnDef } from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useFetchBasketsData } from "@/Queries/portfolio-queries";
-import { BasketType } from "./portfolio-utils/types";
+import { BasketType, CustomColumnDef } from "./portfolio-utils/types";
 
 const Portfolio = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,20 +24,16 @@ const Portfolio = () => {
     undefined
   );
 
-  const { data: basketsData } = useFetchBasketsData(
-    searchTerm,
-    currentPage.toString(),
-    "10"
-  );
-  useEffect(() => {
-    if (basketsData) {
-      console.log(basketsData, "basketsssss");
-    }
-  }, [basketsData]);
-  const columns: ColumnDef<BasketType>[] = [
+  const {
+    data: basketsData,
+    isFetching,
+    isPlaceholderData,
+  } = useFetchBasketsData(searchTerm, currentPage.toString(), "10");
+
+  const columns: CustomColumnDef<BasketType>[] = [
     {
       id: "Basket Name",
-      accessorKey: "basketName",
+      accessorKey: "name",
       header: "Basket Name",
     },
     {
@@ -54,12 +49,13 @@ const Portfolio = () => {
       id: "Invested Value",
       accessorKey: "investedValue",
       header: "Invested Value",
-      cell: () => {
+      cell: ({ row }) => {
         // const amount = parseFloat(row.getValue("amount"));
         const formatted = new Intl.NumberFormat("en-IN", {
           style: "currency",
           currency: "INR",
-        }).format(300.55);
+        }).format(row.original?.totalInvested);
+        console.log(row.original, "formatted");
 
         return <div className="font-medium">{formatted}</div>;
       },
@@ -87,7 +83,12 @@ const Portfolio = () => {
                 Edit Basket
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setEditPayload(row.original);
+                  setIsBasketDialogOpen(true);
+                }}
+              >
                 <Trash2 color="#fa0000" /> Delete Basket
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -155,6 +156,8 @@ const Portfolio = () => {
           }}
           onRowSelectionChange={handleRowSelectionChange}
           title="Baskets Table"
+          fetching={isFetching}
+          placeholderData={isPlaceholderData}
         />
       </motion.div>
       <BasketForm

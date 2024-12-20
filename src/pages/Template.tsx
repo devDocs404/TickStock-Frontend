@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SearchBar } from "./Dashboard/Components/SearchBar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Outlet, useLocation } from "react-router-dom";
-import { BarChart2, Wallet, User, LayoutDashboard } from "lucide-react";
+import {
+  BarChart2,
+  Wallet,
+  User,
+  LayoutDashboard,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { Sidebar } from "../components/SideBar";
 import { useGlobalStore } from "@/Store/GlobalSore";
 import { Toaster } from "sonner";
@@ -112,10 +119,25 @@ const Template = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+  useEffect(() => {
+    console.log(activeItem, "lkjasljfjasldjf");
+  }, [activeItem]);
   return (
     <>
       <Toaster richColors />
-      <div className={`flex h-[100vh] m-w-[100vw] overflow-y-auto `}>
+      <div
+        className={`flex h-[100vh] m-w-[100vw] overflow-y-auto items-center justify-center  ${
+          toggleTheme === "dark" ? "bg-black-900" : "bg-[rgb(40,100,246,0.1)]"
+        }`}
+      >
+        {isOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 min-[800px]:hidden
+						transition-all duration-300 ease-in-out"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+        )}
         <Sidebar
           activeItem={activeItem}
           setActiveItem={setActiveItem}
@@ -127,43 +149,60 @@ const Template = ({
           activeChildItem={activeChildItem}
           setActiveChildItem={setActiveChildItem}
         />
-
-        <div
-          className={`m-h-[100vh] w-[100%] overflow-hidden
-         `}
-        >
-          <div
-            className={`flex w-full flex-col  overflow-hidden
-             ${isOpen ? "w-[calc(100vw-278px)]" : "w-full "}
-          `}
+        {!isOpen && (
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`p-2 rounded-full ${
+              toggleTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-200"
+            } transition-all duration-300 ease-in-out bg-white absolute top-10
+					hidden max-md:block min-[800px]:hidden
+					${isOpen ? "left-[310px]" : "left-[20px]"}
+					z-[100]`}
+            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
           >
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className={` flex ${
-                isOpen ? "justify-between" : "justify-end"
-              } w-full p-[20px] `}
-            >
-              <div className=" w-full ">
-                <h1 className={`text-3xl font-bold h-[100%] flex items-center`}>
-                  My Portfolio
-                </h1>
-              </div>
-              <div className=" w-full">
-                <SearchBar
-                  toggleTheme={toggleTheme}
-                  inputRef={searchInputRef}
-                />
-              </div>
-            </motion.div>
-          </div>
+            {isOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
+          </button>
+        )}
+        <div className="w-full m-auto ">
           <div
-            className={`w-[98%] h-[90%] m-auto shadow-2xl rounded-lg ${
+            className={`w-[98%] h-[97vh] m-auto shadow-2xl rounded-lg ${
               toggleTheme === "dark" ? "bg-[#0F0F0F]" : "bg-white"
             }`}
           >
             <Outlet />
+          </div>
+          <div
+            className={`h-full w-[100%] overflow-hidden
+         `}
+          >
+            {/* <div
+							className={`flex w-full flex-col  overflow-hidden
+             ${isOpen ? 'w-[calc(100vw-278px)]' : 'w-full '}
+          `}
+						>
+							<motion.div
+								initial={{ opacity: 0, y: -20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.5 }}
+								className={` flex ${
+									isOpen ? 'justify-between' : 'justify-end'
+								} w-full p-[20px] `}
+							>
+								<div className=" w-full ">
+									<h1
+										className={`text-3xl font-bold h-[100%] flex items-center`}
+									>
+										{menuItems[activeItem ?? 0]?.label}
+									</h1>
+								</div>
+								<div className=" w-full">
+									<SearchBar
+										toggleTheme={toggleTheme}
+										inputRef={searchInputRef}
+									/>
+								</div>
+							</motion.div>
+						</div> */}
           </div>
         </div>
       </div>

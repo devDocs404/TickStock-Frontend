@@ -5,6 +5,7 @@ import { persist, devtools, createJSONStorage } from "zustand/middleware";
 // Define a simplified interface for the store state
 interface StoreState {
   toggleTheme: string;
+  manualTheme: boolean;
 
   // Setters for each field
   setField: <T extends keyof StoreState>(key: T, value: StoreState[T]) => void;
@@ -12,6 +13,7 @@ interface StoreState {
 
 const initialState: Omit<StoreState, "setField"> = {
   toggleTheme: "dark",
+  manualTheme: false,
 };
 
 const useGlobalStore = create<StoreState>()(
