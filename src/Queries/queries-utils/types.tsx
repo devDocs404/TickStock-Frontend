@@ -1,4 +1,10 @@
-export interface PaginationType {
+export type metaDataType = {
+  page: number
+  size: number
+  totalItems: number
+  totalPages: number
+}
+export type PaginationType = {
   currentPage: string
   hasNextPage: boolean
   hasPreviousPage: boolean
@@ -6,8 +12,9 @@ export interface PaginationType {
   totalItems: string
   totalPages: string
   totalCumulativeCount?: string
+  cumulativeCount?: number
 }
-export interface ApiResponse<T> {
+export type ApiResponse<T> = {
   data: T[]
   pagination: PaginationType
 }

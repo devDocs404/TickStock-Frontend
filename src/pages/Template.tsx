@@ -13,8 +13,8 @@ import { Toaster } from 'sonner'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useGlobalStore } from '@/Store/GlobalSore'
+import { Sidebar } from '@/components/SideBar'
 
-import { Sidebar } from '../components/SideBar'
 // import { SearchBar } from './Dashboard/Components/SearchBar'
 
 const Template = ({

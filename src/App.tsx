@@ -2,8 +2,8 @@ import { RouterProvider } from 'react-router-dom'
 
 import { useState } from 'react'
 
-import useThemeProvider from './Context/UseThemeProvider'
-import { createRoutes } from './Routes/Routes'
+import { createRoutes } from '@/Routes/Routes'
+import useThemeProvider from '@/hooks/UseThemeProvider'
 
 export function App() {
   const [isDark, setIsDark] = useState(false)

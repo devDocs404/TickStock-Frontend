@@ -9,9 +9,9 @@ import {
   useFetchStockBasketsData,
 } from '@/Queries/portfolio-queries'
 import { usePortfolioStore } from '@/Store/PortfolioStore'
-import TableLoading from '@/components/Global/Table-Loading'
 import CustomTooltip from '@/components/Global/custom-tooltip'
 import { DataTable } from '@/components/Global/data-table'
+import TableLoading from '@/components/Global/table-loading'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomSelect from '@/components/ui/custom-select'
@@ -52,12 +52,13 @@ const PortfolioStocks = () => {
     isPlaceholderData,
   } = useFetchBasketsData(searchTerm, currentPage.toString(), '10')
 
-  const { data: stocksBasketData } = useFetchStockBasketsData(
-    '',
-    currentPage.toString(),
-    '10',
-    selectedOption?.value,
-  )
+  const { data: stocksBasketData, isFetching: isStocksFetching } =
+    useFetchStockBasketsData(
+      searchStocksTerm,
+      currentPage.toString(),
+      '10',
+      selectedOption?.value,
+    )
   const navigate = useNavigate()
 
   const columns: CustomColumnDef<StockBasketDetailsType>[] = [
@@ -188,7 +189,7 @@ const PortfolioStocks = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex justify-between items-center">
-            {basketsData && Number(basketsData.pagination.totalItems) > 0 && (
+            {basketsData && Number(basketsData?.pagination?.totalItems) > 0 && (
               <Button
                 variant="secondary"
                 className="relative top-[12px]"
@@ -200,6 +201,22 @@ const PortfolioStocks = () => {
           </CardContent>
         </Card>
       </motion.div>
+      <div className="flex flex-col gap-2 w-1/4 mt-5">
+        <CustomSelect
+          options={options}
+          value={selectedOption}
+          onChange={value => {
+            setSelectedOption(value)
+            setField(
+              'selectedBasketOption',
+              value as { label: string; value: string },
+            )
+          }}
+          label="Basket"
+          placeholder="Select a basket"
+          setSearchTerm={setSearchTerm}
+        />
+      </div>
       {isFetching && !isPlaceholderData ? (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -209,34 +226,17 @@ const PortfolioStocks = () => {
         >
           <TableLoading />
         </motion.div>
-      ) : stocksBasketData?.data?.length ? (
+      ) : (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="flex flex-col gap-2 w-1/4 mt-5">
-            <CustomSelect
-              options={options}
-              value={selectedOption}
-              onChange={value => {
-                setSelectedOption(value)
-                setField(
-                  'selectedBasketOption',
-                  value as { label: string; value: string },
-                )
-              }}
-              label="Basket"
-              placeholder="Select a basket"
-              setSearchTerm={setSearchTerm}
-            />
-          </div>
-
           <DataTable
             columns={columns}
             data={stocksBasketData?.data || []}
             pagination={{
-              metadata: stocksBasketData?.pagination,
+              metadata: basketsData?.pagination,
               currentPage: currentPage,
               setCurrentPage: setCurrentPage,
             }}
@@ -247,27 +247,34 @@ const PortfolioStocks = () => {
             title="Stock Table"
           />
         </motion.div>
-      ) : (
-        <div className="flex justify-center items-center h-full flex-col gap-5">
-          <h1 className="text-2xl font-bold">No baskets available</h1>
-          <Button
-            variant="secondary"
-            onClick={() => setIsBasketDialogOpen(true)}
-          >
-            <Plus className="h-4 w-4" /> Create Basket
-          </Button>
-        </div>
       )}
 
-      <BasketForm
-        isBasketDialogOpen={isBasketDialogOpen}
-        setIsBasketDialogOpen={setIsBasketDialogOpen}
-      />
-      <StocksForm
-        // editPayload={editPayload}
-        isStocksDialogOpen={isStocksDialogOpen}
-        setIsStocksDialogOpen={setIsStocksDialogOpen}
-      />
+      {!isStocksFetching &&
+        Number(stocksBasketData?.pagination?.cumulativeCount) === 0 && (
+          <div className="flex justify-center items-center h-full flex-col gap-5">
+            <h1 className="text-2xl font-bold">No baskets available</h1>
+            <Button
+              variant="secondary"
+              onClick={() => setIsBasketDialogOpen(true)}
+            >
+              <Plus className="h-4 w-4" /> Create Basket
+            </Button>
+          </div>
+        )}
+
+      {isBasketDialogOpen && (
+        <BasketForm
+          isBasketDialogOpen={isBasketDialogOpen}
+          setIsBasketDialogOpen={setIsBasketDialogOpen}
+        />
+      )}
+      {isStocksDialogOpen && (
+        <StocksForm
+          // editPayload={editPayload}
+          isStocksDialogOpen={isStocksDialogOpen}
+          setIsStocksDialogOpen={setIsStocksDialogOpen}
+        />
+      )}
     </div>
   )
 }

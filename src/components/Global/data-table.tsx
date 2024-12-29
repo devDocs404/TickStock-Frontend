@@ -31,11 +31,11 @@ import { CustomColumnDef } from '@/pages/Portfolio/portfolio-utils/types'
 
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
-import TableLoading from './Table-Loading'
 import { SearchInput } from './search-input'
+import TableLoading from './table-loading'
 
 interface DataTableProps<TData> {
-  columns: CustomColumnDef<TData>[] // Use the corrected CustomColumnDef type
+  columns: CustomColumnDef<TData>[]
   data: TData[]
   onRowSelectionChange?: (selectedRows: TData[]) => void
   pagination?: {
@@ -67,18 +67,6 @@ export function DataTable<TData>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [hasNextPage, setHasNextPage] = useState(false)
-  const [hasPreviousPage, setHasPreviousPage] = useState(false)
-  const [totalItems, setTotalItems] = useState('0')
-
-  useEffect(() => {
-    if (pagination?.metadata) {
-      setHasNextPage(pagination?.metadata?.hasNextPage || false)
-      setHasPreviousPage(pagination?.metadata?.hasPreviousPage || false)
-      setTotalItems(pagination?.metadata?.totalItems || '0')
-    }
-  }, [pagination])
-
   // Dynamically add the select column if onRowSelectionChange is defined
   const modifiedColumns = [
     ...(onRowSelectionChange
@@ -250,32 +238,37 @@ export function DataTable<TData>({
           </TableBody>
         </Table>
       </div>
-      {parseInt(totalItems) > 10 && pagination?.currentPage && (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              const value = parseInt(pagination?.currentPage) - 1
-              pagination?.setCurrentPage(value?.toString())
-            }}
-            disabled={!hasPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              const value = parseInt(pagination?.currentPage) + 1
-              pagination?.setCurrentPage(value.toString())
-            }}
-            disabled={!hasNextPage}
-          >
-            Next
-          </Button>
-        </div>
-      )}
+      {pagination?.metadata?.totalPages &&
+        parseInt(pagination?.metadata?.totalPages) > 1 && (
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const value = parseInt(pagination?.currentPage || '1') - 1
+                if (pagination?.setCurrentPage) {
+                  pagination.setCurrentPage(value.toString())
+                }
+              }}
+              disabled={!pagination?.metadata?.hasPreviousPage}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const value = parseInt(pagination?.currentPage || '1') + 1
+                if (pagination?.setCurrentPage) {
+                  pagination.setCurrentPage(value.toString())
+                }
+              }}
+              disabled={!pagination?.metadata?.hasNextPage}
+            >
+              Next
+            </Button>
+          </div>
+        )}
     </div>
   )
 }

@@ -1,0 +1,1 @@
+export { useAuthPasswordResetUpdate } from './useAuthPasswordResetUpdate'

@@ -1,13 +1,13 @@
 import { Outlet, createBrowserRouter } from 'react-router-dom'
 
+import AuthenticationPage from '@/pages/Auth/AuthenticationPage'
 import EmailVerifiedCard from '@/pages/Auth/email-verify'
 import PasswordReset from '@/pages/Auth/reset-password'
+import Dashboard from '@/pages/Dashboard/Dashboard'
 import Portfolio from '@/pages/Portfolio/Portfolio'
 import PortfolioStocks from '@/pages/Portfolio/portfolio-stocks'
+import Template from '@/pages/Template'
 
-import AuthenticationPage from '../pages/Auth/AuthenticationPage'
-import Dashboard from '../pages/Dashboard/Dashboard'
-import Template from '../pages/Template'
 import ProtectedRoutes from './ProtectedRoutes'
 import WorkInProgress from './WorkInProgress'
 

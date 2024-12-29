@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { useState } from 'react'
 
-import { useForgetPasswordPost } from '@/Queries/AuthQueries'
+import { useAuthPasswordResetCreate } from '@/api/hooks/useAuthPasswordResetCreate'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,19 +24,21 @@ const schema = z.object({
 })
 
 export function ForgetPassword() {
-  const { mutate } = useForgetPasswordPost()
   const [data, setData] = useState({
     email: '',
   })
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  const { mutate: passwordResetMutate } = useAuthPasswordResetCreate({
+    onSuccess: () => {
+      setData({ email: '' })
+      setIsDialogOpen(false)
+      toast.success(`A password reset link has been sent to your email.`)
+    },
+  })
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value })
-  }
-
-  const successTrigger = () => {
-    setData({ email: '' })
-    setIsDialogOpen(false)
   }
 
   const handleSubmitForgetPassword = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,7 +50,7 @@ export function ForgetPassword() {
     if (!result.success) {
       toast.error(result.error.errors.map(error => error.message).join(', '))
     } else {
-      mutate({ data: { email: data.email }, successTrigger })
+      passwordResetMutate({ data: { email: data.email } })
     }
   }
 

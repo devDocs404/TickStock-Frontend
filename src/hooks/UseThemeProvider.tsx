@@ -36,7 +36,7 @@ function useThemeProvider() {
       // Clean up the interval on component unmount
       return () => clearInterval(intervalId)
     }
-  }, [setTheme])
+  }, [setTheme, manualTheme])
 }
 
 export default useThemeProvider

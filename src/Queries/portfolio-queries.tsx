@@ -9,6 +9,7 @@ import {
 import { keepPreviousData } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { useResponseHandler } from '@/hooks/UseResponseHandler'
 import { dummyResponse } from '@/lib/utils'
 // import { useAuthStore } from "@/Store/AuthStore";
 import {
@@ -20,7 +21,6 @@ import {
   TickerType,
 } from '@/pages/Portfolio/portfolio-utils/types'
 
-import { useResponseHandler } from '../Context/UseResponseHandler'
 import { ApiResponse } from './queries-utils/types'
 
 export function useFetchBasketsData(
@@ -170,7 +170,6 @@ export function useFetchStockBasketsData(
       return response.data
     },
     placeholderData: keepPreviousData,
-    retry: false,
     enabled: !!basketId,
   })
 }
@@ -359,7 +358,7 @@ export function useCreateStockPost() {
         console.log(error)
       } else {
         await queryClient.invalidateQueries({
-          queryKey: ['stocks'],
+          queryKey: ['stocksBaskets'],
         })
       }
     },

@@ -24,9 +24,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { BasketType } from '@/pages/Portfolio/portfolio-utils/types'
 import { createBasketSchema } from '@/schema'
-
-import { BasketType } from '../portfolio-utils/types'
 
 const BasketForm = ({
   editPayload,

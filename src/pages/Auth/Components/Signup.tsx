@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
 import { Eye } from 'lucide-react'
 import { EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { useSignupPost } from '@/Queries/AuthQueries'
+import { useAuthRegisterCreate } from '@/api/hooks/useAuthRegisterCreate'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -56,12 +57,20 @@ const SignupForm = ({
     mobileNumber: '',
     isVerified: false,
     isForgetPassword: false,
+    role: 'user',
   })
   const [passwordType, setPasswordType] = useState({
     password: 'password',
     confirmPassword: 'password',
   })
-  const { mutate, isPending } = useSignupPost({ setIsLogin })
+  const { mutate: signupMutate, isPending } = useAuthRegisterCreate({
+    onSuccess: () => {
+      setIsLogin(true)
+      toast.success(
+        `Mail has been sent to your email. Please verify your email.`,
+      )
+    },
+  })
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [passwordValidations, setPasswordValidations] = useState<
     PasswordRule[]
@@ -108,7 +117,8 @@ const SignupForm = ({
       schema2.parse(data)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...finalPayload } = data
-      mutate({ ...finalPayload })
+      // mutate({ ...finalPayload })
+      signupMutate({ data: finalPayload })
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.errors.reduce(

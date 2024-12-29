@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { useEffect, useState } from 'react'
 
-import { useLoginPost } from '@/Queries/AuthQueries'
+import { useAuthStore } from '@/Store/AuthStore'
+import { useAuthLoginCreate } from '@/api/hooks/useAuthLoginCreate'
 import { ModeToggle } from '@/components/Global/ModeToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,7 +26,18 @@ const LoginForm = ({
 }) => {
   // State to store form data and errors
   const [data, setData] = useState({ email: '', password: '' })
-  const { mutate, isPending } = useLoginPost()
+  const { setField } = useAuthStore()
+  const navigate = useNavigate()
+  const { mutate: loginMutate, isPending } = useAuthLoginCreate({
+    onSuccess: response => {
+      toast.success(`Login successful.`)
+      setField('user', response.userInfo)
+      setField('refreshToken', response.authorization.refreshToken)
+      setField('accessToken', response.authorization.accessToken)
+      navigate('/')
+    },
+  })
+
   const [passwordType, setPasswordType] = useState('password')
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +63,8 @@ const LoginForm = ({
       toast.error(result.error.errors.map(error => error.message).join(', '))
     } else {
       console.log('Form submitted:', data)
-      mutate(data)
+      // mutate(data)
+      loginMutate({ data: data })
     }
   }
   useEffect(() => {

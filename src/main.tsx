@@ -1,8 +1,9 @@
 import { createRoot } from 'react-dom/client'
 
-import { App } from './App'
+import { App } from '@/App'
+import { AppProviders } from '@/providers/app-providers'
+
 import './index.css'
-import { AppProviders } from './providers/app-providers'
 
 const container = document.getElementById('root')
 

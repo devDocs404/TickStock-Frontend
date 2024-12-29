@@ -5,9 +5,10 @@ import { z } from 'zod'
 
 import { useEffect, useState } from 'react'
 
-import { useResetPasswordPatch } from '@/Queries/AuthQueries'
+// import { useResetPasswordPatch } from '@/Queries/AuthQueries'
 import { useAuthStore } from '@/Store/AuthStore'
 import { useGlobalStore } from '@/Store/GlobalSore'
+import { useAuthPasswordResetUpdate } from '@/api'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -33,7 +34,13 @@ export default function StockPasswordReset() {
   const navigate = useNavigate()
   const { toggleTheme } = useGlobalStore()
   const { setField } = useAuthStore()
-  const { mutate: resetPassword } = useResetPasswordPatch()
+  // const { mutate: resetPassword } = useResetPasswordPatch()
+  const { mutate } = useAuthPasswordResetUpdate({
+    onSuccess: () => {
+      setIsSuccess(true)
+      toast.success(`Password reset successfully.`)
+    },
+  })
 
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
@@ -72,12 +79,16 @@ export default function StockPasswordReset() {
       toast.error(result.error.errors.map(error => error.message).join(', '))
     } else {
       // Reset password logic after successful validation
-      resetPassword({
-        data: { password: data.password },
-        params: { id: id || '' }, // Make sure 'id' is passed as needed
-        successTrigger: () => {
-          setIsSuccess(true) // Assuming setIsSuccess updates the state
-        },
+      // resetPassword({
+      //   data: { password: data.password },
+      //   params: { id: id || '' }, // Make sure 'id' is passed as needed
+      //   successTrigger: () => {
+      //     setIsSuccess(true) // Assuming setIsSuccess updates the state
+      //   },
+      // })
+      mutate({
+        data: { data: { password: data.password } },
+        params: { id: id || '' },
       })
     }
   }
