@@ -32,6 +32,55 @@ import {
   StockBasketDetailsType,
 } from './portfolio-utils/types'
 
+interface StockTransaction {
+  date: string
+  quantity: number
+  price: number
+  type: 'BUY' | 'SELL'
+  tickerId: string
+}
+
+const subColumns: CustomColumnDef<StockTransaction>[] = [
+  {
+    id: 'date',
+    accessorKey: 'date',
+    header: 'Date',
+    cell: ({ row }) => <div>{formatDate(row.original.date)}</div>,
+  },
+  {
+    id: 'quantity',
+    accessorKey: 'quantity',
+    header: 'Quantity',
+    cell: ({ row }) => <div>{row.original.quantity}</div>,
+  },
+  {
+    id: 'price',
+    accessorKey: 'price',
+    header: 'Price',
+    cell: ({ row }) => <div>{formatCurrency(row.original.price)}</div>,
+  },
+  {
+    id: 'type',
+    accessorKey: 'type',
+    header: 'Type',
+    cell: ({ row }) => (
+      <div
+        className={
+          row.original.type === 'BUY' ? 'text-green-500' : 'text-red-500'
+        }
+      >
+        {row.original.type}
+      </div>
+    ),
+  },
+  {
+    id: 'tickerId',
+    accessorKey: 'tickerId',
+    header: 'Ticker',
+    cell: ({ row }) => <div>{row.original.tickerId}</div>,
+  },
+]
+
 const PortfolioStocks = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchStocksTerm, setSearchStocksTerm] = useState('')
@@ -174,6 +223,27 @@ const PortfolioStocks = () => {
     setSelectedOption(selectedBasketOption)
   }, [selectedBasketOption])
 
+  const fetchStockTransactions = async (): Promise<StockTransaction[]> => {
+    // This is a mock function - replace with your actual API call
+    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API delay
+    return [
+      {
+        date: new Date().toISOString(),
+        quantity: 100,
+        price: 305.5,
+        type: 'BUY',
+        tickerId: 'AAPL',
+      },
+      {
+        date: new Date().toISOString(),
+        quantity: 50,
+        price: 310.75,
+        type: 'SELL',
+        tickerId: 'AAPL',
+      },
+    ]
+  }
+
   return (
     <div className="mx-auto w-full p-2 h-full overflow-y-auto">
       {/* Header Card */}
@@ -231,8 +301,9 @@ const PortfolioStocks = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex-1 h-[calc(100%-200px)]"
         >
-          <DataTable
+          <DataTable<StockBasketDetailsType, StockTransaction>
             columns={columns}
             data={stocksBasketData?.data || []}
             pagination={{
@@ -245,6 +316,11 @@ const PortfolioStocks = () => {
               setSearchTerm: setSearchStocksTerm,
             }}
             title="Stock Table"
+            tableSubDrop={{
+              enabled: true,
+              subColumns: subColumns,
+              fetchSubData: fetchStockTransactions,
+            }}
           />
         </motion.div>
       )}
