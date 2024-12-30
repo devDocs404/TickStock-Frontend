@@ -10,7 +10,7 @@ import { keepPreviousData } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { useResponseHandler } from '@/hooks/UseResponseHandler'
-import { dummyResponse } from '@/lib/utils'
+// import { dummyResponse } from '@/lib/utils'
 // import { useAuthStore } from "@/Store/AuthStore";
 import {
   BasketType,
@@ -94,7 +94,7 @@ export function useFetchStocksData(
   page: string,
   size: string,
   basketId: string,
-  stockBasketId?: string,
+  stockBasketId: string,
 ): UseQueryResult<ApiResponse<StocksType>, Error> {
   const { handleResponse } = useResponseHandler()
 
@@ -107,10 +107,6 @@ export function useFetchStocksData(
       ]
       const { search, page, size, basketId } = params
 
-      if (basketId === '') {
-        return dummyResponse as ApiResponse<StocksType>
-      }
-
       const url = `protected/get-stock-records`
       const response = await handleResponse<ApiResponse<StocksType>>({
         url,
@@ -121,6 +117,7 @@ export function useFetchStocksData(
     },
     placeholderData: keepPreviousData,
     retry: false,
+    enabled: !!basketId && stockBasketId !== '',
   })
 }
 // export function useFetchStockBasketsData(

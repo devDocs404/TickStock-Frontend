@@ -5,13 +5,13 @@ export type metaDataType = {
   totalPages: number
 }
 export type PaginationType = {
-  currentPage: string
+  currentPage: number
   hasNextPage: boolean
   hasPreviousPage: boolean
-  pageSize: string
-  totalItems: string
-  totalPages: string
-  totalCumulativeCount?: string
+  pageSize: number
+  totalItems: number
+  totalPages: number
+  totalCumulativeCount?: number
   cumulativeCount?: number
 }
 export type ApiResponse<T> = {
