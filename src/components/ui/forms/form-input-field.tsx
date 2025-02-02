@@ -52,11 +52,18 @@ function FormInput<T extends FieldValues>({
                 className={icon ? 'pl-8' : 'pl-2'}
                 type={type}
                 disabled={disabled}
-                onChange={
-                  convertToString
-                    ? e => field.onChange(e.target.value.toString())
-                    : undefined
-                }
+                value={field.value === 0 ? '' : field.value}
+                onChange={e => {
+                  if (type === 'number') {
+                    const value =
+                      e.target.value === '' ? null : Number(e.target.value)
+                    field.onChange(value)
+                  } else if (convertToString) {
+                    field.onChange(e.target.value.toString())
+                  } else {
+                    field.onChange(e.target.value)
+                  }
+                }}
               />
             </div>
           </FormControl>

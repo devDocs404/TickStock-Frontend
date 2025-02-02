@@ -7,6 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -46,8 +47,9 @@ interface DataTableProps<TData, TSubData = unknown> {
   tableSubDrop?: {
     enabled: boolean
     subColumns: CustomColumnDef<TSubData>[]
-    fetchSubData: (parentRow: TData) => Promise<TSubData[]>
+    fetchSubData: Record<string, TSubData[]>
   }
+  onRowClick?: (row: TData) => Promise<void> | void
 }
 
 export function DataTable<TData extends object, TSubData = unknown>({
@@ -61,35 +63,30 @@ export function DataTable<TData extends object, TSubData = unknown>({
   fetching,
   placeholderData,
   tableSubDrop,
+  onRowClick,
 }: DataTableProps<TData, TSubData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})
-  const [subData, setSubData] = useState<Record<string, TSubData[]>>({})
-  const [loadingRows, setLoadingRows] = useState<Record<string, boolean>>({})
 
   const handleRowClick = useCallback(
     async (rowId: string, row: TData) => {
       if (!tableSubDrop?.enabled) return
 
-      setExpandedRows(prev => ({
-        ...prev,
-        [rowId]: !prev[rowId],
-      }))
+      await onRowClick?.(row)
 
-      if (!subData[rowId] && !loadingRows[rowId]) {
-        setLoadingRows(prev => ({ ...prev, [rowId]: true }))
-        try {
-          const fetchedData = await tableSubDrop.fetchSubData(row)
-          setSubData(prev => ({ ...prev, [rowId]: fetchedData }))
-        } catch (error) {
-          console.error('Error fetching sub data:', error)
-        } finally {
-          setLoadingRows(prev => ({ ...prev, [rowId]: false }))
+      setExpandedRows(prev => {
+        // If clicking the same row that's already open, close it
+        if (prev[rowId]) {
+          return {}
         }
-      }
+        // Otherwise, close all rows and open only the clicked one
+        return {
+          [rowId]: true,
+        }
+      })
     },
-    [tableSubDrop, subData, loadingRows],
+    [onRowClick, tableSubDrop?.enabled],
   )
 
   const table = useReactTable({
@@ -117,59 +114,69 @@ export function DataTable<TData extends object, TSubData = unknown>({
 
   const renderSubTableContent = useCallback(
     (rowId: string) => {
-      if (loadingRows[rowId]) {
+      const row = data.find((_, index) => `${index}` === rowId)
+      if (!row) return null
+
+      const actualId = (row as TData & { id: string }).id
+      const subDataForRow = tableSubDrop?.fetchSubData[actualId]
+
+      if (!subDataForRow || subDataForRow.length === 0) {
         return (
-          <div className="flex justify-center py-4">
-            <TableLoading />
+          <div className="text-center py-4 text-muted-foreground">
+            No sub-data available
           </div>
         )
       }
 
-      if (!subData[rowId]) {
-        return <div className="text-center py-4">No sub-data available</div>
-      }
-
       return (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {tableSubDrop?.subColumns.map(column => (
-                <TableHead key={column.id}>
-                  {typeof column.header === 'string'
-                    ? column.header
-                    : column.id}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {subData[rowId].map((subRow, index) => (
-              <TableRow key={index}>
+        <div className="rounded-lg border border-border bg-card shadow-sm">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
                 {tableSubDrop?.subColumns.map(column => (
-                  <TableCell key={column.id}>
-                    {(() => {
-                      const value = subRow[column.id as keyof TSubData]
-                      if (typeof column.cell === 'function') {
-                        try {
-                          return column.cell({
-                            getValue: () => value,
-                            row: { original: subRow },
-                          } as CellContext<TSubData, unknown>)
-                        } catch {
-                          return String(value)
-                        }
-                      }
-                      return String(value)
-                    })()}
-                  </TableCell>
+                  <TableHead
+                    key={column.id}
+                    className="bg-muted/90 dark:bg-muted/30"
+                  >
+                    {typeof column.header === 'string'
+                      ? column.header
+                      : column.id}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {subDataForRow.map((subRow, index) => (
+                <TableRow
+                  key={index}
+                  className="hover:bg-muted/30 dark:hover:bg-muted/10 transition-colors"
+                >
+                  {tableSubDrop?.subColumns.map(column => (
+                    <TableCell key={column.id}>
+                      {(() => {
+                        const value = subRow[column.id as keyof TSubData]
+                        if (typeof column.cell === 'function') {
+                          try {
+                            return column.cell({
+                              getValue: () => value,
+                              row: { original: subRow },
+                            } as CellContext<TSubData, unknown>)
+                          } catch {
+                            return String(value)
+                          }
+                        }
+                        return String(value)
+                      })()}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )
     },
-    [loadingRows, subData, tableSubDrop?.subColumns],
+    [tableSubDrop?.subColumns, tableSubDrop?.fetchSubData, data],
   )
 
   const renderTableContent = useMemo(() => {
@@ -186,7 +193,10 @@ export function DataTable<TData extends object, TSubData = unknown>({
     if (!table.getRowModel().rows?.length) {
       return (
         <TableRow>
-          <TableCell colSpan={columns.length} className="h-24 text-center">
+          <TableCell
+            colSpan={columns.length}
+            className="h-24 text-center text-muted-foreground"
+          >
             No results.
           </TableCell>
         </TableRow>
@@ -198,9 +208,10 @@ export function DataTable<TData extends object, TSubData = unknown>({
         <TableRow
           key={row.id}
           data-state={row.getIsSelected() ? 'selected' : undefined}
-          className={
-            tableSubDrop?.enabled ? 'cursor-pointer hover:bg-muted/50' : ''
-          }
+          className={`
+            ${tableSubDrop?.enabled ? 'cursor-pointer' : ''}
+            ${expandedRows[row.id] ? '' : 'hover:bg-muted/30 dark:hover:bg-muted/10'}
+          `}
           onClick={() => handleRowClick(row.id, row.original)}
         >
           {row.getVisibleCells().map(cell => (
@@ -212,15 +223,23 @@ export function DataTable<TData extends object, TSubData = unknown>({
             </TableCell>
           ))}
         </TableRow>
-        {expandedRows[row.id] && (
-          <TableRow>
-            <TableCell colSpan={columns.length} className="p-0">
-              <div className="bg-muted/50 p-4">
-                {renderSubTableContent(row.id)}
-              </div>
-            </TableCell>
-          </TableRow>
-        )}
+        <AnimatePresence>
+          {expandedRows[row.id] && (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="p-0 border-0">
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-3">{renderSubTableContent(row.id)}</div>
+                </motion.div>
+              </TableCell>
+            </TableRow>
+          )}
+        </AnimatePresence>
       </>
     ))
   }, [
@@ -248,15 +267,19 @@ export function DataTable<TData extends object, TSubData = unknown>({
       </div>
 
       <div className="flex-1 min-h-0">
-        <div className="rounded-md border h-full flex flex-col">
+        <div className="rounded-lg border border-border bg-card shadow-sm h-full flex flex-col">
           <div className="w-full flex-none">
             <Table>
-              <TableHeader className="bg-background">
+              <TableHeader>
                 {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow
+                    key={headerGroup.id}
+                    className="hover:bg-transparent"
+                  >
                     {headerGroup.headers.map(header => (
                       <TableHead
                         key={header.id}
+                        className="bg-muted/30 dark:bg-muted/10"
                         style={{
                           width: header.column.columnDef.meta?.width || 'auto',
                         }}

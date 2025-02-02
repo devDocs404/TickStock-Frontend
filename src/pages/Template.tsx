@@ -62,16 +62,18 @@ const Template = ({
   const menuItems = useMemo(
     () => [
       { icon: LayoutDashboard, label: 'Dashboard', url: '/' },
-      {
-        icon: Wallet,
-        label: 'Portfolio',
-        url: '/portfolio/stocks',
-        children: [
-          { icon: BarChart2, label: 'Stocks', url: '/portfolio/stocks' },
-          { icon: Wallet, label: 'Baskets', url: '/portfolio/baskets' },
-        ],
-      },
-      { icon: BarChart2, label: 'Profit and Loss', url: '/p&l' },
+      // {
+      //   icon: Wallet,
+      //   label: 'Portfolio',
+      //   url: '/portfolio/stocks',
+      //   children: [
+      //     { icon: BarChart2, label: 'Stocks', url: '/portfolio/stocks' },
+      //     { icon: Wallet, label: 'Baskets', url: '/portfolio/baskets' },
+      //   ],
+      // },
+      // { icon: BarChart2, label: 'Profit and Loss', url: '/p&l' },
+      { icon: Wallet, label: 'Portfolio', url: '/portfolio-1' },
+      { icon: BarChart2, label: 'Watchlist', url: '/watchlist' },
       { icon: User, label: 'Account', url: '/account' },
     ],
     [],

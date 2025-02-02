@@ -63,7 +63,7 @@ const Sidebar = ({
 			min-[800px]:relative
 			min-[800px]:left-0 overflow-hidden
 			shadow-lg
-			z-[105]
+			z-[49]
 			transition-all duration-100 ease
 			`}
     >

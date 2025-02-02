@@ -158,7 +158,8 @@ let isRefreshing = false
 let refreshSubscribers: ((token: string) => void)[] = []
 
 const useResponseHandler = () => {
-  const { refreshToken, accessToken, setField } = useAuthStore()
+  // const { refreshToken, accessToken, setField } = useAuthStore()
+  const { refreshToken, accessToken } = useAuthStore()
   const navigate = useNavigate()
   // const baseURL = 'http://127.0.0.1:8787';
   const baseURL = 'http://127.0.0.1:8787'
@@ -198,7 +199,7 @@ const useResponseHandler = () => {
             )
             const newAccessToken = refreshResponse.data.accessToken
 
-            setField('accessToken', newAccessToken)
+            // setField('accessToken', newAccessToken)
             onTokenRefreshed(newAccessToken)
             isRefreshing = false
           } catch (refreshError) {
@@ -239,6 +240,7 @@ const useResponseHandler = () => {
       headers: accessToken
         ? {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           }
         : {},
     }

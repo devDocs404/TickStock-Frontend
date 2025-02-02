@@ -8,9 +8,11 @@ import { Input } from '../ui/input'
 export const SearchInput = ({
   search,
   setSearchTerm,
+  placeholder,
 }: {
   search: string
   setSearchTerm: (searchTerm: string) => void
+  placeholder?: string
 }) => {
   const [localSearchTerm, setLocalSearchTerm] = useState(search)
 
@@ -47,7 +49,7 @@ export const SearchInput = ({
       <Search className="absolute right-2 top-2.5 text-muted-foreground" />
       <Input
         type="text"
-        placeholder="Search stocks..."
+        placeholder={placeholder || 'Search stocks...'}
         value={localSearchTerm}
         onChange={handleSearch}
         className="pr-10 w-full"

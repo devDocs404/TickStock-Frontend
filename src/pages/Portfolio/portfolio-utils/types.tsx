@@ -93,13 +93,21 @@ export type TickerType = {
 }
 
 export type CreateStockPayload = {
-  basketId: string
+  portfolioId: string
   tickerId: string
   brokerId: string
   buyPrice: number
   quantity: number
   totalInvested?: number
   notes?: string
+}
+
+export type CreatePortfolioPayload = {
+  name: string
+  riskLevel: number | null
+  strategy: number | null
+  description: string | null
+  type: string
 }
 
 // Broker Types

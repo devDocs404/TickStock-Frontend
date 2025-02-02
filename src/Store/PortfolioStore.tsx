@@ -4,16 +4,25 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware'
 
 // Define a simplified interface for the store state
 interface StoreState {
-  selectedBasketOption: {
-    label: string
-    value: string
+  portfolioDetails: {
+    id: string
+    name: string
+    description: string
+    totalInvested: number
+    riskLevel: number
   }
   // Setters for each field
   setField: <T extends keyof StoreState>(key: T, value: StoreState[T]) => void
 }
 
 const initialState: Omit<StoreState, 'setField'> = {
-  selectedBasketOption: { label: '', value: '' },
+  portfolioDetails: {
+    id: '',
+    name: '',
+    description: '',
+    totalInvested: 0,
+    riskLevel: 0,
+  },
 }
 
 const usePortfolioStore = create<StoreState>()(

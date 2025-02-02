@@ -39,6 +39,7 @@ import { FormReactSelect } from '@/components/ui/forms/form-react-select'
 import { Textarea } from '@/components/ui/textarea'
 // import { Select } from '@/components/ui/react-select';
 import { useDebounce } from '@/hooks/useDebounce'
+import { useStockStore } from '@/hooks/useStockStore'
 // Data and Types
 import { createStockSchema } from '@/schema'
 
@@ -73,19 +74,19 @@ export function StocksForm({
   const [brokerSearchTerm, setBrokerSearchTerm] = useState('')
   const [options, setOptions] = useState<OptionType[]>([])
   const [brokerOptions, setBrokerOptions] = useState<OptionType[]>([])
+  const { portfolioDetails } = usePortfolioStore()
 
   // Debounce the search terms
   const debouncedSearchTerm = useDebounce(searchTerm)
   const debouncedBrokerSearchTerm = useDebounce(brokerSearchTerm)
 
   // Store and Queries
-  const { selectedBasketOption } = usePortfolioStore()
   const { mutate: createBasket } = useCreateStockPost()
   const { data: tickersData, isFetching: isTickersFetching } =
     useFetchTickersData({
       search: debouncedSearchTerm,
       ...DEFAULT_QUERY_PARAMS,
-      symbolType: 'EQUITY',
+      symbolType: 'stock',
     })
   const { data: brokersData, isFetching: isBrokersFetching } =
     useFetchBrokersData({
@@ -94,27 +95,31 @@ export function StocksForm({
     })
 
   const selectedBasketId = useMemo(
-    () => selectedBasketOption.value,
-    [selectedBasketOption],
+    () => portfolioDetails.id,
+    [portfolioDetails],
   )
 
   // Form Setup
   const form = useForm<FormValues>({
     resolver: zodResolver(createStockSchema),
     defaultValues: {
-      basketId: selectedBasketId,
+      portfolioId: selectedBasketId,
       tickerId: editPayload?.stock_baskets?.tickerId || '',
       brokerId: editPayload?.brokerId || '',
-      buyPrice: editPayload?.buyPrice?.toString() || '',
-      quantity: editPayload?.quantity?.toString() || '',
-      totalInvested: editPayload?.totalInvested?.toString() || '',
+      buyPrice: editPayload?.buyPrice || 0,
+      quantity: editPayload?.quantity || 0,
+      totalInvested: editPayload?.totalInvested || 0,
       notes: editPayload?.notes || '',
     },
     mode: 'onBlur',
   })
 
   const { setValue, watch, reset, control, handleSubmit } = form
-  const [buyPrice, quantity] = watch(['buyPrice', 'quantity'])
+  const [buyPrice, quantity, tickerId] = watch([
+    'buyPrice',
+    'quantity',
+    'tickerId',
+  ])
 
   // Add this to debug form errors
   console.log('Form errors:', form.formState.errors)
@@ -127,27 +132,27 @@ export function StocksForm({
 
   const handleCreateStock = useCallback(
     (data: FormValues) => {
-      if (!selectedBasketOption.value) {
+      if (!portfolioDetails.id) {
         toast.error('Please select a basket')
         return
       }
 
       const payload: CreateStockPayload = {
-        basketId: selectedBasketOption.value,
+        portfolioId: portfolioDetails.id,
         tickerId: data.tickerId,
-        buyPrice: Number(data.buyPrice),
-        quantity: Number(data.quantity),
-        totalInvested: Number(data.totalInvested),
+        buyPrice: data.buyPrice,
+        quantity: data.quantity,
+        totalInvested: data.totalInvested,
         brokerId: data.brokerId,
         notes: data.notes,
       }
-
+      console.log('payload', payload)
       createBasket({
         data: payload,
         successTrigger: handleClose,
       })
     },
-    [selectedBasketOption.value, createBasket, handleClose],
+    [portfolioDetails.id, createBasket, handleClose],
   )
 
   const onSubmit = useCallback(
@@ -174,6 +179,7 @@ export function StocksForm({
         label: `${item.shortName} (${item.symbolId})`,
         value: item.symbolId,
       }))
+      console.log('formattedOptions', formattedOptions)
       setOptions(formattedOptions)
     }
   }, [tickersData])
@@ -190,10 +196,18 @@ export function StocksForm({
 
   useEffect(() => {
     if (buyPrice && quantity) {
-      const total = (Number(buyPrice) * Number(quantity)).toString()
+      const total = Number(buyPrice) * Number(quantity)
       setValue('totalInvested', total)
     }
   }, [buyPrice, quantity, setValue])
+
+  const { stocks } = useStockStore()
+
+  useEffect(() => {
+    if (tickerId && stocks?.[tickerId]?.currentPrice) {
+      setValue('buyPrice', stocks[tickerId].currentPrice)
+    }
+  }, [tickerId, setValue, stocks])
 
   const renderFormFields = () => (
     <>

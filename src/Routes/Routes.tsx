@@ -4,8 +4,9 @@ import AuthenticationPage from '@/pages/Auth/AuthenticationPage'
 import EmailVerifiedCard from '@/pages/Auth/email-verify'
 import PasswordReset from '@/pages/Auth/reset-password'
 import Dashboard from '@/pages/Dashboard/Dashboard'
+import DashboardA from '@/pages/Portfolio-main/DashboardA'
 import Portfolio from '@/pages/Portfolio/Portfolio'
-import PortfolioStocks from '@/pages/Portfolio/portfolio-stocks'
+// import PortfolioStocks from '@/pages/Portfolio/portfolio-stocks'
 import Template from '@/pages/Template'
 
 import ProtectedRoutes from './ProtectedRoutes'
@@ -47,33 +48,33 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
                 </ProtectedRoutes>
               ),
             },
-            {
-              path: '/portfolio/stocks',
-              element: (
-                <ProtectedRoutes>
-                  <Outlet />
-                </ProtectedRoutes>
-              ),
-              children: [
-                {
-                  path: '/portfolio/stocks',
-                  index: true,
-                  element: (
-                    <ProtectedRoutes>
-                      <PortfolioStocks />
-                    </ProtectedRoutes>
-                  ),
-                },
-                {
-                  path: '/portfolio/stocks/:stockId',
-                  element: (
-                    <ProtectedRoutes>
-                      <PortfolioStocks />
-                    </ProtectedRoutes>
-                  ),
-                },
-              ],
-            },
+            // {
+            //   path: '/portfolio/stocks',
+            //   element: (
+            //     <ProtectedRoutes>
+            //       <Outlet />
+            //     </ProtectedRoutes>
+            //   ),
+            //   children: [
+            //     {
+            //       path: '/portfolio/stocks',
+            //       index: true,
+            //       element: (
+            //         <ProtectedRoutes>
+            //           <PortfolioStocks />
+            //         </ProtectedRoutes>
+            //       ),
+            //     },
+            //     {
+            //       path: '/portfolio/stocks/:stockId',
+            //       element: (
+            //         <ProtectedRoutes>
+            //           <PortfolioStocks />
+            //         </ProtectedRoutes>
+            //       ),
+            //     },
+            //   ],
+            // },
           ],
         },
         {
@@ -81,6 +82,15 @@ const createRoutes = (isDark: boolean, setIsDark: (value: boolean) => void) => {
           element: (
             <ProtectedRoutes>
               <Dashboard isDark={isDark} />
+            </ProtectedRoutes>
+          ),
+          index: true,
+        },
+        {
+          path: '/portfolio-1',
+          element: (
+            <ProtectedRoutes>
+              <DashboardA />
             </ProtectedRoutes>
           ),
           index: true,

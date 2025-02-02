@@ -9,15 +9,17 @@ import {
 import { keepPreviousData } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+// import { api } from '@/api'
+// import { ApiError } from '@/api/types'
 import { useResponseHandler } from '@/hooks/UseResponseHandler'
 // import { dummyResponse } from '@/lib/utils'
 // import { useAuthStore } from "@/Store/AuthStore";
 import {
   BasketType,
   BrokerType,
+  CreatePortfolioPayload,
   CreateStockPayload,
   StockBasketDetailsType,
-  StocksType,
   TickerType,
 } from '@/pages/Portfolio/portfolio-utils/types'
 
@@ -88,63 +90,6 @@ export function useFetchTickersData(payload: {
     retry: false,
   })
 }
-
-export function useFetchStocksData(
-  search: string,
-  page: string,
-  size: string,
-  basketId: string,
-  stockBasketId: string,
-): UseQueryResult<ApiResponse<StocksType>, Error> {
-  const { handleResponse } = useResponseHandler()
-
-  return useQuery<ApiResponse<StocksType>, Error>({
-    queryKey: ['stocks', { search, page, size, basketId, stockBasketId }],
-    queryFn: async ({ queryKey }) => {
-      const [, params] = queryKey as [
-        string,
-        { search: string; page: string; size: string; basketId: string },
-      ]
-      const { search, page, size, basketId } = params
-
-      const url = `protected/get-stock-records`
-      const response = await handleResponse<ApiResponse<StocksType>>({
-        url,
-        type: 'get',
-        payload: { params: { search, page, size, basketId, stockBasketId } },
-      })
-      return response.data
-    },
-    placeholderData: keepPreviousData,
-    retry: false,
-    enabled: !!basketId && stockBasketId !== '',
-  })
-}
-// export function useFetchStockBasketsData(
-// 	search: string,
-// 	page: string,
-// 	size: string,
-// 	basketId: string
-// ): UseQueryResult<ApiResponse<StockBasketDetailsType>, Error> {
-// 	const { handleResponse } = useResponseHandler();
-
-// 	return useQuery<ApiResponse<StockBasketDetailsType>, Error>({
-// 		queryKey: ['stocksBaskets', { search, page, size, basketId }],
-// 		queryFn: async () => {
-// 			const url = `protected/get-stock-basket`;
-// 			const response = await handleResponse<
-// 				ApiResponse<StockBasketDetailsType>
-// 			>({
-// 				url,
-// 				type: 'get',
-// 				payload: { params: { search, page, size, basketId } },
-// 			});
-// 			return response.data;
-// 		},
-// 		placeholderData: keepPreviousData,
-// 		retry: false,
-// 	});
-// }
 
 export function useFetchStockBasketsData(
   search: string,
@@ -333,7 +278,7 @@ export function useCreateStockPost() {
     }) => {
       console.log('create stock payload', payload)
       return await handleResponse({
-        url: 'protected/stock-basket',
+        url: 'protected/portfolio-basket',
         type: 'post',
         payload: {
           data: payload.data,
@@ -355,7 +300,13 @@ export function useCreateStockPost() {
         console.log(error)
       } else {
         await queryClient.invalidateQueries({
-          queryKey: ['stocksBaskets'],
+          queryKey: ['portfolio-stocks'],
+        })
+        await queryClient.invalidateQueries({
+          queryKey: ['portfolio'],
+        })
+        await queryClient.invalidateQueries({
+          queryKey: ['portfolio-transactions'],
         })
       }
     },
@@ -393,5 +344,86 @@ export function useFetchBrokersData(payload: {
       return response.data
     },
     placeholderData: keepPreviousData,
+  })
+}
+
+export function useCreatePortfolioPost() {
+  const { handleResponse } = useResponseHandler()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: {
+      data: CreatePortfolioPayload
+      successTrigger: () => void
+    }) => {
+      return await handleResponse({
+        url: 'protected/portfolio',
+        type: 'post',
+        payload: {
+          data: payload.data,
+        },
+      })
+    },
+    onSuccess: (
+      _: unknown,
+      payload: {
+        data: CreatePortfolioPayload
+        successTrigger: () => void
+      },
+    ) => {
+      payload.successTrigger()
+      toast.success(`Portfolio created successfully.`)
+    },
+    onSettled: async (_, error) => {
+      if (error) {
+        console.log(error)
+      } else {
+        await queryClient.invalidateQueries({
+          queryKey: ['portfolio'],
+        })
+      }
+    },
+  })
+}
+
+export function useUpdatePortfolioPatch() {
+  const { handleResponse } = useResponseHandler()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: {
+      data: CreatePortfolioPayload
+      params: { id: string }
+      successTrigger: () => void
+    }) => {
+      return await handleResponse({
+        url: `protected/portfolio`,
+        type: 'patch',
+        payload: {
+          data: payload.data,
+          params: payload.params,
+        },
+      })
+    },
+    onSuccess: (
+      _: unknown,
+      payload: {
+        data: CreatePortfolioPayload
+        params: { id: string }
+        successTrigger: () => void
+      },
+    ) => {
+      payload.successTrigger()
+      toast.success(`Portfolio updated successfully.`)
+    },
+    onSettled: async (_, error) => {
+      if (error) {
+        console.log(error)
+      } else {
+        await queryClient.invalidateQueries({
+          queryKey: ['portfolios'],
+        })
+      }
+    },
   })
 }

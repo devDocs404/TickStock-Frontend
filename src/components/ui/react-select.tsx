@@ -160,9 +160,10 @@ export function ReactSelect({
       setSelectedOption(matchedOption)
     }
   }, [value, options])
+  console.log('filteredOptions', filteredOptions)
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 ">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -198,20 +199,22 @@ export function ReactSelect({
             <CommandInput
               placeholder="Search option..."
               value={searchText} // Bind search text to input
+              className="z-[200]"
               onValueChange={setSearchText} // Update search text on change
             />
-            <CommandList>
+            <CommandList className="z-[200]">
               {/* Prioritize "Loading..." over "No options found." */}
               {isFetching ? (
                 <CommandEmpty>Loading...</CommandEmpty>
               ) : filteredOptions.length === 0 ? (
                 <CommandEmpty>No options found.</CommandEmpty>
               ) : null}
-              <CommandGroup>
+              <CommandGroup className="z-[200]">
                 {filteredOptions.map(option => (
                   <CommandItem
                     key={option.value}
                     value={option.value}
+                    className="z-[200]"
                     onSelect={currentValue => {
                       const selected = options.find(
                         opt => opt.value === currentValue,

@@ -34,10 +34,22 @@ export function formatCurrency(value: number | string) {
 }
 
 export function formatDate(value: string) {
-  // return new Date(value).toLocaleDateString("en-IN", {
-  //   day: "2-digit",
-  //   month: "2-digit",
-  //   year: "numeric",
-  // });
   return dayjs(value).format('DD/MM/YYYY')
+}
+
+// Format numbers with Indian locale (adds commas for thousands, lakhs, etc.) and adds leading zero if less than 10
+export function formatQuantity(value: number | string): string {
+  const numericValue = parseFloat(value?.toString() || '0')
+
+  if (isNaN(numericValue)) {
+    throw new Error('Invalid number input')
+  }
+
+  // Add leading zero for numbers less than 10
+  const formattedValue =
+    numericValue < 10
+      ? `0${numericValue}`
+      : new Intl.NumberFormat('en-IN').format(numericValue)
+
+  return formattedValue
 }

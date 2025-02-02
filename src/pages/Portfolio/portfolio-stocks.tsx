@@ -7,9 +7,9 @@ import { useEffect, useState } from 'react'
 import {
   useFetchBasketsData,
   useFetchStockBasketsData,
-  useFetchStocksData,
 } from '@/Queries/portfolio-queries'
 import { usePortfolioStore } from '@/Store/PortfolioStore'
+import { useFetchPortFolioStocksFetch } from '@/api/hooks'
 import { DataTable } from '@/components/Global/DataTable/DataTable'
 import CustomTooltip from '@/components/Global/custom-tooltip'
 import TableLoading from '@/components/Global/table-loading'
@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, formatQuantity } from '@/lib/utils'
 
 import BasketForm from './Components/basket-form'
 import StocksForm from './Components/stocks-form'
@@ -52,33 +52,68 @@ const subColumns: CustomColumnDef<StockTransaction>[] = [
     id: 'quantity',
     accessorKey: 'quantity',
     header: 'Quantity',
-    cell: ({ row }) => <div>{row.original.quantity}</div>,
+    cell: ({ row }) => <div>{formatQuantity(row.original.quantity)}</div>,
   },
   {
     id: 'price',
     accessorKey: 'price',
-    header: 'Price',
+    header: 'I/Price',
     cell: ({ row }) => <div>{formatCurrency(row.original.price)}</div>,
   },
   {
-    id: 'type',
-    accessorKey: 'type',
-    header: 'Type',
+    id: 'total',
+    accessorKey: 'total',
+    header: 'I/Invested',
     cell: ({ row }) => (
-      <div
-        className={
-          row.original.type === 'BUY' ? 'text-green-500' : 'text-red-500'
-        }
-      >
-        {row.original.type}
-      </div>
+      <div>{formatCurrency(row.original.price * row.original.quantity)}</div>
     ),
   },
   {
-    id: 'tickerId',
-    accessorKey: 'tickerId',
-    header: 'Ticker',
-    cell: ({ row }) => <div>{row.original.tickerId}</div>,
+    id: 'price',
+    accessorKey: 'price',
+    header: 'C/Price',
+    cell: ({ row }) => <div>{formatCurrency(row.original.price)}</div>,
+  },
+  {
+    id: 'total',
+    accessorKey: 'total',
+    header: 'C/Invested',
+    cell: ({ row }) => (
+      <div>{formatCurrency(row.original.price * row.original.quantity)}</div>
+    ),
+  },
+  {
+    id: 'total',
+    accessorKey: 'total',
+    header: 'P/L',
+    cell: ({ row }) => (
+      <div>{formatCurrency(row.original.price * row.original.quantity)}</div>
+    ),
+  },
+  // {
+  //   id: 'type',
+  //   accessorKey: 'type',
+  //   header: 'Type',
+  //   cell: ({ row }) => (
+  //     <div
+  //       className={
+  //         row.original.type === 'BUY' ? 'text-green-500' : 'text-red-500'
+  //       }
+  //     >
+  //       {row.original.type}
+  //     </div>
+  //   ),
+  // },
+  {
+    id: 'actions',
+    header: '',
+    meta: { width: '10%' },
+    cell: () => (
+      <div className="flex gap-4 justify-start items-center">
+        <Button variant="ghost">Edit</Button>
+        <Button variant="ghost">Sell</Button>
+      </div>
+    ),
   },
 ]
 
@@ -88,6 +123,11 @@ const PortfolioStocks = () => {
   const [currentPage, setCurrentPage] = useState('1')
   const [isBasketDialogOpen, setIsBasketDialogOpen] = useState(false)
   const [isStocksDialogOpen, setIsStocksDialogOpen] = useState(false)
+  const [subData, setSubData] = useState<Record<string, StockTransaction[]>>({})
+  const [currentStockQuery, setCurrentStockQuery] = useState<{
+    basketId: string
+    stockBasketId: string
+  } | null>(null)
   const [selectedOption, setSelectedOption] = useState<
     | {
         label: string | undefined
@@ -224,34 +264,42 @@ const PortfolioStocks = () => {
     setSelectedOption(selectedBasketOption)
   }, [selectedBasketOption])
 
-  const fetchStockTransactions = async (): Promise<StockTransaction[]> => {
-    // This is a mock function - replace with your actual API call
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API delay
-    return [
-      {
-        date: new Date().toISOString(),
-        quantity: 100,
-        price: 305.5,
-        type: 'BUY',
-        tickerId: 'AAPL',
-      },
-      {
-        date: new Date().toISOString(),
-        quantity: 50,
-        price: 310.75,
-        type: 'SELL',
-        tickerId: 'AAPL',
-      },
-    ]
-  }
-
-  const fetchStockRow = useFetchStocksData(
+  const fetchStockRow = useFetchPortFolioStocksFetch(
     '',
     '1',
     '100000',
-    selectedOption?.value || '',
-    '',
+    currentStockQuery?.basketId || '',
+    currentStockQuery?.stockBasketId || '',
   )
+
+  const handleRowClick = async (row: StockBasketDetailsType) => {
+    if (!subData[row.id]) {
+      setCurrentStockQuery({
+        basketId: row.basketId,
+        stockBasketId: row.id,
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (currentStockQuery && !subData[currentStockQuery.stockBasketId]) {
+      fetchStockRow.refetch().then(response => {
+        if (response.data) {
+          const data = response.data.data.map(stock => ({
+            date: stock.createdAt,
+            quantity: stock.quantity,
+            price: stock.buyPrice,
+            type: 'BUY' as const,
+            tickerId: stock.stock_baskets?.tickerId,
+          }))
+          setSubData(prev => ({
+            ...prev,
+            [currentStockQuery.stockBasketId]: data,
+          }))
+        }
+      })
+    }
+  }, [currentStockQuery, fetchStockRow, subData])
 
   return (
     <div className="mx-auto w-full p-2 h-full overflow-y-auto">
@@ -268,15 +316,23 @@ const PortfolioStocks = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex justify-between items-center">
-            {basketsData && Number(basketsData?.pagination?.totalItems) > 0 && (
-              <Button
-                variant="secondary"
-                className="relative top-[12px]"
-                onClick={() => setIsStocksDialogOpen(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" /> Create Stocks
-              </Button>
-            )}
+            <Button
+              variant="secondary"
+              className="relative top-[12px]"
+              onClick={() => setIsStocksDialogOpen(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" /> Create Stocks
+            </Button>
+            {basketsData &&
+              Number(basketsData?.pagination?.totalItems) == 0 && (
+                <Button
+                  variant="secondary"
+                  className="relative top-[12px]"
+                  onClick={() => setIsStocksDialogOpen(true)}
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Create Stocks
+                </Button>
+              )}
           </CardContent>
         </Card>
       </motion.div>
@@ -290,7 +346,7 @@ const PortfolioStocks = () => {
         >
           <TableLoading />
         </motion.div>
-      ) : options.length > 0 ? (
+      ) : options.length == 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -329,8 +385,9 @@ const PortfolioStocks = () => {
             tableSubDrop={{
               enabled: true,
               subColumns: subColumns,
-              fetchSubData: fetchStockTransactions,
+              fetchSubData: subData,
             }}
+            onRowClick={handleRowClick}
           />
         </motion.div>
       ) : (
